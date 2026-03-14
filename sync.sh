@@ -4,6 +4,7 @@
 # Run this on any device to get the latest skills.
 
 set -e
+shopt -s nullglob
 
 REPO_DIR="$HOME/personal-agentic-skills"
 SKILLS_DIR="$HOME/.claude/skills"
