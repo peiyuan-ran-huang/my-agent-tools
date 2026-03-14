@@ -48,7 +48,7 @@ Changes to either file **must** be mirrored in the other.
 ---qc [target] [extra criteria]
 ```
 
-Three dashes + two characters. / 三个短横线加两个字符。
+Three dashes + two characters (no space). / 三个短横线加两个字符（中间不加空格）。
 
 ## Example Output / 输出示例
 
