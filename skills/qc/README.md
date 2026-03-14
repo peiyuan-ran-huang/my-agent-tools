@@ -2,7 +2,7 @@
 
 **Version**: v0.1
 **Last Updated**: 2026-03-14
-**Author**: Peiyuan Huang, with significant assistance from Claude Code
+**Author**: Peiyuan (Ran) Huang, with (*significant*) assistance from Claude Code
 
 ---
 
@@ -49,6 +49,29 @@ Changes to either file **must** be mirrored in the other.
 ```
 
 Three dashes + two characters. / 三个短横线加两个字符。
+
+## Example Output / 输出示例
+
+```
+## QC Review Report
+**Review Target**: SKILL.md (EN)
+
+### Findings
+#### Standards — Minor
+- sync.sh only copies SKILL.md, missing SKILL_ZH.md
+- Suggested fix: use wildcard *.md in cp command
+
+✓ Correctness / Completeness / Optimality / Consistency: No issues
+
+### Summary
+- **Overall Rating**: Minor
+- One operational issue found; core content is solid.
+```
+
+## See Also / 相关
+
+*For heavier-duty multi-round audits, see the `audit` skill (`---audit`). qc is the quick scan; audit is the deep dive.*
+*如需更重量级的多轮深度审计，请看 `audit` skill（`---audit`）。qc 是快速扫描，audit 是深度审计。*
 
 ---
 
