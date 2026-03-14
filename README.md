@@ -13,8 +13,8 @@ skills/
 ## First-time setup (new device)
 
 ```bash
-git clone https://github.com/peiyuan-ran-huang/personal-agentic-skills.git ~/claude-personal-skills
-bash ~/claude-personal-skills/sync.sh
+git clone https://github.com/peiyuan-ran-huang/personal-agentic-skills.git ~/personal-agentic-skills
+bash ~/personal-agentic-skills/sync.sh
 ```
 
 ## Update (existing device)
