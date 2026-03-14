@@ -15,7 +15,7 @@ echo "Syncing skills to $SKILLS_DIR ..."
 for skill_dir in "$REPO_DIR/skills/"/*/; do
   skill_name=$(basename "$skill_dir")
   mkdir -p "$SKILLS_DIR/$skill_name"
-  cp "$skill_dir/SKILL.md" "$SKILLS_DIR/$skill_name/SKILL.md"
+  cp "$skill_dir"/*.md "$SKILLS_DIR/$skill_name/"
   echo "  ✓ $skill_name"
 done
 

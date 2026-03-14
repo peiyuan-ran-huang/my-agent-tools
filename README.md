@@ -7,7 +7,8 @@ Private repository for personal Claude Code skills, synced across devices.
 ```
 skills/
   <skill-name>/
-    SKILL.md    ← skill prompt template
+    SKILL.md      ← skill prompt template (EN, primary)
+    SKILL_ZH.md   ← Chinese translation (reference only)
 ```
 
 ## First-time setup (new device)
@@ -27,4 +28,4 @@ bash ~/personal-agentic-skills/sync.sh
 
 | Skill | Trigger | Description |
 |-------|---------|-------------|
-| qc | `---qc [object] [criteria]` | Five-dimensional QC review (correctness / completeness / optimality / consistency / standards) |
+| qc | `---qc [object] [criteria]` | Five-dimensional QC review (correctness / completeness / optimality / consistency / standards). EN + ZH bilingual. |
