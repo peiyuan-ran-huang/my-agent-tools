@@ -1,75 +1,77 @@
 ---
 name: qc
 description: >
-  对方案、代码、文档、数据或建议执行五维结构化审查。
+  Five-dimensional structured review for plans, code, documents, data, or advice.
   ONLY trigger when user types ---qc (case-insensitive).
   Do NOT activate on "检查", "审查", "复核" or any other words.
 ---
 
-# QC: 深度审查
+<!-- SYNC RULE: Any changes to this file MUST be mirrored in SKILL_ZH.md, and vice versa. -->
 
-你现在切换为**严格审查者**角色。对指定对象进行认真、仔细、全面、深度、critically 的检查。
+# QC: Deep Review
 
-## 参数解析
+You now assume the role of **strict reviewer**. Conduct a thorough, meticulous, comprehensive, in-depth, and critical examination of the specified target.
 
-1. 读取 ---qc 后的 args：第一个词为审查对象，其余为额外标准
-2. 对象映射：代码/code → 代码 | 方案/plan → 方案 | 文档/doc → 文档 | 数据/data → 数据 | 建议/advice → 建议；若内容混合 → 按用户问题指向或内容主体比例选主体类型，次要类型叠加检查
-3. 无参数 → 自动识别当前对话中最近的实质性产出物
-4. 若目标内容不在当前上下文中但有明确文件路径或最近编辑的文件 → 先用 Read 读取再审查；文件过大时 → 分段读取，优先读取核心逻辑部分再审查
-5. （兜底）仍无产出物可审查 → 提示用户指定
+## Parameter Parsing
 
-## 审查框架（五维）
+1. Read args after `---qc`: the first token is the review target; the rest are additional criteria
+2. Target mapping: 代码/code → Code | 方案/plan → Plan | 文档/doc → Document | 数据/data → Data | 建议/advice → Advice; for mixed content → select the primary type based on the user's question focus or content proportion; overlay checks from secondary types
+3. No arguments → auto-detect the most recent substantive output in the current conversation
+4. If target content is not in current context but a clear file path or recently edited file exists → use Read to load the file before reviewing; for oversized files → read in segments, prioritizing core logic sections
+5. (Fallback) Still no reviewable output found → prompt the user to specify
 
-逐维检查，对每个维度给出判定：
+## Review Framework (Five Dimensions)
 
-| 维度 | 核心问题 |
-|------|----------|
-| 正确性 | 事实准确？逻辑无误？无幻觉/捏造？ |
-| 完整性 | 关键点无遗漏？边界情况已考虑？ |
-| 最优性 | 是否最优解？有无更简洁/高效替代？ |
-| 一致性 | 与上下文/参考原文/已有代码/用户要求等一致？无自相矛盾？ |
-| 规范性 | 符合相关标准？（学术规范/编码风格/安全规则） |
+Examine each dimension and render a verdict:
 
-### 对象专项叠加
+| Dimension | Core Question |
+|-----------|---------------|
+| Correctness | Facts accurate? Logic sound? No hallucinations or fabrications? |
+| Completeness | All key points covered? Edge cases considered? |
+| Optimality | Is this the best approach? Any simpler or more efficient alternatives? |
+| Consistency | Aligned with context / reference text / existing code / user requirements? No self-contradictions? |
+| Standards | Compliant with relevant standards? (academic conventions / coding style / security rules) |
 
-- **代码**: +安全漏洞 +性能 +错误处理 +可读性 +依赖合理性 +测试覆盖
-- **方案**: +可行性（技术/资源/时间可达性）+潜在风险（列出前3项，注明概率高/中/低×影响高/中/低）+缓解策略（每项风险对应1-2句）+步骤遗漏（列出关键缺失步骤）+资源估计（人力/时间/工具，量化）
-- **文档**: +引用真实性 +事实核查 +学术规范(STROBE/CONSORT等) +数值一致
-- **数据**: +变量定义 +缺失值处理 +样本量 +数据来源层级 +数值单位/量纲一致性 +数据类型合理性
-- **建议**: +是否答对问题 +有无更优替代 +潜在副作用/负面后果 +适用边界与前提
+### Target-Specific Overlays
 
-## 输出格式
+- **Code**: +Security vulnerabilities +Performance +Error handling +Readability +Dependency reasonableness +Test coverage
+- **Plan**: +Feasibility (technical / resource / timeline achievability) +Potential risks (list top 3; label each Probability High/Med/Low × Impact High/Med/Low) +Mitigation strategies (1–2 sentences per risk) +Missing steps (list critical omissions) +Resource estimates (personnel / time / tools; quantify)
+- **Document**: +Citation authenticity +Fact-checking +Academic standards (STROBE / CONSORT, etc.) +Numerical consistency
+- **Data**: +Variable definitions +Missing-value handling +Sample size +Data source hierarchy +Unit / dimensional consistency +Data type reasonableness
+- **Advice**: +Does it address the actual question? +Any better alternatives? +Potential side effects or negative consequences +Applicable boundaries and prerequisites
 
-按以下模板输出：
+## Output Format
+
+Use the following template:
 
 ```
-## QC 审查报告
+## QC Review Report
 
-**审查对象**: [自动识别/用户指定]
-**额外标准**: [用户指定内容，无则省略此行]
+**Review Target**: [auto-detected / user-specified]
+**Additional Criteria**: [user-specified content; omit this line if none]
 
-### 发现
+### Findings
 
-[仅展开有问题的维度，标注 Critical/Major/Minor]
+[Expand only dimensions with issues; label each Critical / Major / Minor]
 
-#### [维度名] — [Critical/Major/Minor]
-- 问题描述
-- 建议修改
+#### [Dimension] — [Critical / Major / Minor]
+- Issue description
+- Suggested fix
 
-[全 OK 的维度合并为一行]
-✓ 正确性 / 完整性 / ...: 无问题
+[Merge all OK dimensions into one line]
+✓ Correctness / Completeness / …: No issues
 
-### 总结
-- **整体评级**: [Critical/Major/Minor/Pass]
-- 总体评价（1-2句）
-- 改进建议清单（如有）
+### Summary
+- **Overall Rating**: [Critical / Major / Minor / Pass]
+- Overall assessment (1–2 sentences)
+- Improvement checklist (if any)
 ```
 
-> **整体评级判定**: 有任一 Critical → Critical；无 Critical 有 Major → Major；全为 Minor → Minor；无发现 → Pass
+> **Overall Rating Rule**: any Critical finding → Critical; no Critical but any Major → Major; all Minor only → Minor; no findings → Pass
 
-## 重要原则
+## Key Principles
 
-- **只审不改**: 输出审查报告，不自动修改任何内容。修复由用户决定。
-- **严格标准**: 宁可多报一个疑点，不放过一个隐患。
-- **引用 academic-workflow.md 规则**: 若该文件在当前上下文中，优先引用其 QC 原则（引用核查、数值报告规范）。
-- **额外标准优先**: 用户指定的额外标准在五维框架之上优先检查。
+- **Review only — no auto-fixes**: Output the review report only. Do not modify any content automatically. Fixes are the user's decision.
+- **Strict standards**: Better to flag one extra suspicion than to miss one hidden risk.
+- **Reference academic-workflow.md**: If this file is present in the current context, prioritize its QC principles (citation verification, numerical reporting standards).
+- **Additional criteria take priority**: User-specified additional criteria are checked first, on top of the five-dimensional framework.
