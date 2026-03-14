@@ -20,7 +20,7 @@ bash ~/personal-agentic-skills/sync.sh
 ## Update (existing device)
 
 ```bash
-bash ~/claude-personal-skills/sync.sh
+bash ~/personal-agentic-skills/sync.sh
 ```
 
 ## Skills
