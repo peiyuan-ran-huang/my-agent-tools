@@ -3,7 +3,7 @@ name: qc
 description: >
   Five-dimensional structured review for plans, code, documents, data, or advice.
   ONLY trigger when user types ---qc (case-insensitive).
-  Do NOT activate on "检查", "审查", "复核" or any other words.
+  Do NOT activate on "检查", "审查", "复核", "check", "review", "verify", "inspect", "audit" or any other words.
 ---
 
 <!-- SYNC RULE: Any changes to this file MUST be mirrored in SKILL_ZH.md, and vice versa. -->
