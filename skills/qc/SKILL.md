@@ -14,11 +14,14 @@ You now assume the role of **strict reviewer**. Conduct a thorough, meticulous, 
 
 ## Parameter Parsing
 
-1. Read args after `---qc`: the first token is the review target; the rest are additional criteria
+1. Read args after `---qc`: the first semantic unit is the review target (a single word, a quoted phrase, or a file path); the rest are additional criteria
 2. Target mapping: 代码/code → Code | 方案/plan → Plan | 文档/doc → Document | 数据/data → Data | 建议/advice → Advice; for mixed content → select the primary type based on the user's question focus or content proportion; overlay checks from secondary types
-3. No arguments → auto-detect the most recent substantive output in the current conversation
-4. If target content is not in current context but a clear file path or recently edited file exists → use Read to load the file before reviewing; for oversized files → read in segments, prioritizing core logic sections
-5. (Fallback) Still no reviewable output found → prompt the user to specify
+3. No arguments → auto-detect using this priority:
+   1. File path mentioned in the user's current message
+   2. Most recent substantive assistant output (code block, plan, document draft, etc.)
+   3. Most recently edited or read file in the session
+   4. (Fallback) Prompt the user to specify
+4. If target content is not in current context but a clear file path or recently edited file exists → use Read to load the file before reviewing; for oversized files → read in segments, prioritising core logic sections
 
 ## Review Framework (Five Dimensions)
 
@@ -55,8 +58,9 @@ Use the following template:
 [Expand only dimensions with issues; label each Critical / Major / Minor]
 
 #### [Dimension] — [Critical / Major / Minor]
-- Issue description
-- Suggested fix
+- **Evidence**: [direct quote / file:line / code snippet]
+- **Issue**: description
+- **Suggested fix**: recommendation
 
 [Merge all OK dimensions into one line]
 ✓ Correctness / Completeness / …: No issues

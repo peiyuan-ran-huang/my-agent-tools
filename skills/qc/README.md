@@ -1,7 +1,7 @@
 # QC: Five-Dimensional Deep Review / 五维深度审查
 
-**Version**: v0.1
-**Last Updated**: 2026-03-14
+**Version**: v0.2
+**Last Updated**: 2026-03-15
 **Author**: Peiyuan (Ran) Huang, with (*significant*) assistance from Claude Code
 
 ---
@@ -52,26 +52,27 @@ Three dashes + two characters (no space). / 三个短横线加两个字符（中
 
 ## Example Output / 输出示例
 
-```
+```text
 ## QC Review Report
-**Review Target**: SKILL.md (EN)
+**Review Target**: analysis.R
 
 ### Findings
-#### Standards — Minor
-- sync.sh only copies SKILL.md, missing SKILL_ZH.md
-- Suggested fix: use wildcard *.md in cp command
+#### Consistency — Minor
+- **Evidence**: Line 12 uses `read.csv()` but line 45 uses `read_csv()` (mixed base R and tidyverse)
+- **Issue**: Inconsistent data import functions within the same script
+- **Suggested fix**: Standardise to `read_csv()` throughout for tidyverse consistency
 
-✓ Correctness / Completeness / Optimality / Consistency: No issues
+✓ Correctness / Completeness / Optimality / Standards: No issues
 
 ### Summary
 - **Overall Rating**: Minor
-- One operational issue found; core content is solid.
+- One style inconsistency found; analysis logic is sound.
 ```
 
 ## See Also / 相关
 
-*For heavier-duty multi-round audits, see the `audit` skill (`---audit`). qc is the quick scan; audit is the deep dive.*
-*如需更重量级的多轮深度审计，请看 `audit` skill（`---audit`）。qc 是快速扫描，audit 是深度审计。*
+*For heavier-duty multi-round audits, see the `audit` skill (`---audit`) (local only; not yet published to this repo). qc is the quick scan; audit is the deep dive.*
+*如需更重量级的多轮深度审计，请看 `audit` skill（`---audit`）（仅本地可用，尚未发布至本仓库）。qc 是快速扫描，audit 是深度审计。*
 
 ---
 
