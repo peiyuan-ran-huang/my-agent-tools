@@ -75,6 +75,7 @@ Use the following template:
 
 ## Key Principles
 
+- **Output calibration**: Before writing the report, read `examples.md` from this skill's directory (`~/.claude/skills/qc/examples.md`) for format and severity calibration. If the file is unavailable, proceed without it.
 - **Review only — no auto-fixes**: Output the review report only. Do not modify any content automatically. Fixes are the user's decision.
 - **Strict standards**: Better to flag one extra suspicion than to miss one hidden risk.
 - **Reference project-level academic rules**: If academic workflow rules (e.g., citation verification, numerical reporting standards) are present in the current context, prioritise them.
