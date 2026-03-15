@@ -1,7 +1,7 @@
 # QC: Five-Dimensional Deep Review / 五维深度审查
 
-**Version**: v0.3
-**Last Updated**: 2026-03-15
+**Version**: v0.3.1
+**Last Updated**: 2026-03-16
 **Author**: Peiyuan (Ran) Huang, with (*significant*) assistance from Claude Code
 
 ---
@@ -57,6 +57,7 @@ Three dashes + two characters (no space). Target can be a word, quoted phrase, o
 ```text
 ## QC Review Report
 **Review Target**: analysis.R
+**Blast Radius**: N/A — standalone content
 
 ### Findings
 #### Consistency — Minor
