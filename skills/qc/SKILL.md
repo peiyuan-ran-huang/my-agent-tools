@@ -6,7 +6,7 @@ description: >
   Do NOT activate on "检查", "审查", "复核", "审计", "check", "review", "verify", "inspect", "audit" or any similar words.
 ---
 
-<!-- version: 0.2 | SYNC RULE: Any changes to this file MUST be mirrored in SKILL_ZH.md, and vice versa. -->
+<!-- version: 0.3 | SYNC RULE: Any changes to this file MUST be mirrored in SKILL_ZH.md, and vice versa. -->
 
 # QC: Deep Review
 
@@ -23,6 +23,18 @@ You now assume the role of **strict reviewer**. Conduct a thorough, meticulous, 
    4. (Fallback) Prompt the user to specify
 4. If target content is not in current context but a clear file path or recently edited file exists → use Read to load the file before reviewing; for oversized files → read in segments, prioritising core logic sections
 
+## Blast Radius Scan (file modifications only)
+
+When the review target includes file modifications, perform this pre-scan before the five dimensions:
+
+1. List all files modified in the current session
+2. For each modified file, search for other files that reference it (scope: current working directory; also `~/.claude/` if config files are involved)
+3. For each reference found, assess whether it is a substantive dependency (not just a passing mention) and whether it needs updating
+4. Feed findings into the Completeness dimension below
+5. For config files (`.bashrc`, `settings.json`, `mcp.json`, `MEMORY.md`, `rules/*`, `scripts/*`), also verify against CLAUDE.md's three-check rule if present
+
+Skip this step when reviewing standalone content (advice, document drafts, plans not tied to existing files).
+
 ## Review Framework (Five Dimensions)
 
 Examine each dimension and render a verdict:
@@ -30,10 +42,12 @@ Examine each dimension and render a verdict:
 | Dimension | Core Question |
 |-----------|---------------|
 | Correctness | Facts accurate? Logic sound? No hallucinations or fabrications? |
-| Completeness | All key points covered? Edge cases considered? |
+| Completeness | All key points covered? Edge cases considered? † |
 | Optimality | Is this the best approach? Any simpler or more efficient alternatives? |
 | Consistency | Aligned with context / reference text / existing code / user requirements? No self-contradictions? |
 | Standards | Compliant with relevant standards? (academic conventions / coding style / security rules) |
+
+> † For file modifications, Completeness includes blast radius — see **Blast Radius Scan** above.
 
 ### Target-Specific Overlays
 

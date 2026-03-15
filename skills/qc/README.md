@@ -1,6 +1,6 @@
 # QC: Five-Dimensional Deep Review / 五维深度审查
 
-**Version**: v0.2
+**Version**: v0.3
 **Last Updated**: 2026-03-15
 **Author**: Peiyuan (Ran) Huang, with (*significant*) assistance from Claude Code
 
@@ -8,9 +8,9 @@
 
 ## What is this? / 这是什么？
 
-A stupidly simple prompt-based skill for Claude Code that runs a structured five-dimensional review (Correctness, Completeness, Optimality, Consistency, Standards) on whatever you just produced. No code, no dependencies, no magic — just a well-crafted prompt template.
+A stupidly simple prompt-based skill for Claude Code that runs a structured five-dimensional review (Correctness, Completeness, Optimality, Consistency, Standards) on whatever you just produced. v0.3 adds a **Blast Radius Scan** that automatically checks cross-file dependencies when reviewing file modifications — so stale references in MEMORY.md or changelog never slip through again. No code, no dependencies, no magic — just a well-crafted prompt template.
 
-一个极其轻量的 Claude Code prompt skill，对你刚产出的东西做五维结构化审查（正确性、完整性、最优性、一致性、规范性）。没有代码，没有依赖，没有黑魔法——就是一个精心打磨的 prompt 模板。
+一个极其轻量的 Claude Code prompt skill，对你刚产出的东西做五维结构化审查（正确性、完整性、最优性、一致性、规范性）。v0.3 新增**影响范围扫描**，在审查文件修改时自动检查跨文件依赖——MEMORY.md 或 changelog 中的过时引用再也不会漏网。没有代码，没有依赖，没有黑魔法——就是一个精心打磨的 prompt 模板。
 
 ## Why? / 为什么做这个？
 

@@ -53,3 +53,9 @@ Reviewing a hypothetical deployment script (`deploy.sh`).
 - ✓ Follow the Overall Rating Rule: no findings → Pass; any Minor → Minor; any Major → Major; any Critical → Critical.
 - ✗ 标记了 Minor 问题却给 Pass
 - ✓ 严格遵循整体评级判定规则。
+
+**4. Narrow scope miss (blast radius) / 范围过窄遗漏（影响范围）**
+- ✗ Credentials moved from `.bashrc` to `.secrets` — QC checks only the three modified files and rates Pass. MEMORY.md still says "credentials in `.bashrc`"; changelog not updated.
+- ✓ For file modifications, grep for references to modified files; flag stale references as Completeness issues.
+- ✗ 凭据从 `.bashrc` 迁移到 `.secrets` — QC 只检查了三个被修改的文件，评为 Pass。MEMORY.md 仍写着"凭据在 `.bashrc`"；changelog 未更新。
+- ✓ 修改文件时，搜索引用了被修改文件的其他文件，将过时引用标记为完整性问题。
