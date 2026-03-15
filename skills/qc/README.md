@@ -75,6 +75,12 @@ Three dashes + two characters (no space). Target can be a word, quoted phrase, o
 *For heavier-duty multi-round audits, see the `audit` skill (`---audit`) (local only; not yet published to this repo). qc is the quick scan; audit is the deep dive.*
 *如需更重量级的多轮深度审计，请看 `audit` skill（`---audit`）（仅本地可用，尚未发布至本仓库）。qc 是快速扫描，audit 是深度审计。*
 
+## Acknowledgements / 致谢
+
+Special thanks to [Codex](https://openai.com/index/codex/) (desktop app) for reviewing this skill and pointing out that a QC skill without evidence requirements is like a peer reviewer without citations — technically possible, but not very convincing. v0.2 is significantly better thanks to its feedback.
+
+特别感谢 [Codex](https://openai.com/index/codex/)（桌面版）对本 skill 的审查和改进建议。Codex 指出，一个不要求附带证据的 QC skill，就像一个不引用文献的审稿人——理论上可以，但说服力嘛……v0.2 的质量提升很大程度上归功于它的反馈。
+
 ---
 
 *Built with ☕ and Claude Code. Peer review, but make it instant and free.*
