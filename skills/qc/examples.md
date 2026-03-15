@@ -16,6 +16,7 @@ Reviewing a hypothetical deployment script (`deploy.sh`).
 ## QC Review Report
 
 **Review Target**: deploy.sh (Code)
+**Blast Radius**: N/A — standalone content
 
 ### Findings
 

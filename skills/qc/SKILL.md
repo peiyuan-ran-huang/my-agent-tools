@@ -6,7 +6,7 @@ description: >
   Do NOT activate on "检查", "审查", "复核", "审计", "check", "review", "verify", "inspect", "audit" or any similar words.
 ---
 
-<!-- version: 0.3 | SYNC RULE: Any changes to this file MUST be mirrored in SKILL_ZH.md, and vice versa. -->
+<!-- version: 0.3.1 | SYNC RULE: Any changes to this file MUST be mirrored in SKILL_ZH.md, and vice versa. -->
 
 # QC: Deep Review
 
@@ -28,12 +28,12 @@ You now assume the role of **strict reviewer**. Conduct a thorough, meticulous, 
 When the review target includes file modifications, perform this pre-scan before the five dimensions:
 
 1. List all files modified in the current session
-2. For each modified file, search for other files that reference it (scope: current working directory; also `~/.claude/` if config files are involved)
+2. For each modified file, search for other files that reference it — use Grep for the filename/path; check import/require/source statements; search index files (MEMORY.md, CLAUDE.md, README.md, package manifests) for references. Scope: current working directory; also `~/.claude/` if config files are involved.
 3. For each reference found, assess whether it is a substantive dependency (not just a passing mention) and whether it needs updating
 4. Feed findings into the Completeness dimension below
 5. For config files (`.bashrc`, `settings.json`, `mcp.json`, `MEMORY.md`, `rules/*`, `scripts/*`), also verify against CLAUDE.md's three-check rule if present
 
-Skip this step when reviewing standalone content (advice, document drafts, plans not tied to existing files).
+Skip this step **only** when the review target is entirely standalone content with no file dependencies (e.g., a freestanding piece of advice, a document draft not yet saved to any file, or a plan not tied to existing files).
 
 ## Review Framework (Five Dimensions)
 
@@ -66,6 +66,7 @@ Use the following template:
 
 **Review Target**: [auto-detected / user-specified]
 **Additional Criteria**: [user-specified content; omit this line if none]
+**Blast Radius**: [N/A — standalone content | scanned X files; Y stale references found]
 
 ### Findings
 
@@ -94,3 +95,4 @@ Use the following template:
 - **Strict standards**: Better to flag one extra suspicion than to miss one hidden risk.
 - **Reference project-level academic rules**: If academic workflow rules (e.g., citation verification, numerical reporting standards) are present in the current context, prioritise them.
 - **Additional criteria take priority**: User-specified additional criteria are checked first, on top of the five-dimensional framework.
+- **Never skip Blast Radius Scan**: For any review involving file modifications, MUST perform the Blast Radius Scan before the five dimensions. When in doubt about whether it applies, perform it — false negatives are costlier than false positives.
