@@ -48,7 +48,8 @@ Changes to either file **must** be mirrored in the other.
 ---qc [target] [extra criteria]
 ```
 
-Three dashes + two characters (no space). / 三个短横线加两个字符（中间不加空格）。
+Three dashes + two characters (no space). Target can be a word, quoted phrase, or file path.
+三个短横线加两个字符（中间不加空格）。目标可以是一个词、引号短语或文件路径。
 
 ## Example Output / 输出示例
 
