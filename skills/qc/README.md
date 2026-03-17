@@ -18,6 +18,8 @@ A stupidly simple prompt template (despite its name "Deep Review") that runs a s
 - **v0.4**: **Pitfalls** mechanism ("错题本") — user-supplied domain-specific mistake log, checked automatically. Inline severity definitions (Critical / Major / Minor). / **错题本**机制 + 内联严重性定义。
 - **v0.5**: **Skill/Prompt** target overlay, **Open Questions** section for ambiguous findings, explicit **Coverage** + **Target Type** + **Blast Radius scope** declarations, formalized pitfalls tag semantics, omission-based evidence support, evidence-led principle. / **技能/提示词**对象叠加、**开放问题**部分、显式**覆盖范围** + **对象类型** + **影响范围边界声明**、形式化标签语义、缺失型证据支持、循证原则。
 
+For full version history, see `CHANGELOG.md`. / 完整版本历史见 `CHANGELOG.md`。
+
 ## Why? / 为什么做这个？
 
 Honestly? I was too lazy to manually double-check my own work every time. So I automated my laziness into a structured framework. Self-entertainment at its finest.

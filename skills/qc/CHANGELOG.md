@@ -2,8 +2,10 @@
 
 All notable changes to this project are documented here.
 Only version increments of 0.1 or above are recorded; patch-level (0.0.1) changes are omitted.
+Dates represent when the version was committed to the repo, not when development started.
 
 本文件记录所有重要变更。仅记录 0.1 及以上的版本增量；0.0.1 级别的修补不记录。
+日期为提交至 repo 的时间，非开发开始时间。
 
 ## [v0.5] — 2026-03-17
 
@@ -27,7 +29,7 @@ Only version increments of 0.1 or above are recorded; patch-level (0.0.1) change
 
 ### Added
 
-- **Pitfalls mechanism** ("错题本"): user-supplied domain-specific mistake log (`pitfalls.md`), checked automatically during every QC review
+- **Pitfalls mechanism** (引入"错题本"机制): user-supplied domain-specific mistake log (`pitfalls.md`), checked automatically during every QC review
 - **Inline severity definitions**: Critical / Major / Minor now have explicit, documented thresholds
 - Trigger tag precision matching for pitfalls entries
 
