@@ -15,11 +15,11 @@ Reviewing a hypothetical deployment script (`deploy.sh`).
 ```
 ## QC Review Report
 
-**Review Target**: deploy.sh (Code)
+**Review Target**: deploy.sh
 **Target Type**: Code
 **Coverage**: Full — all 45 lines reviewed
 **Blast Radius**: N/A — standalone content
-**Pitfalls Check**: checked N entries; 1 matched context; 0 triggered findings
+**Pitfalls Check**: checked 11 entries; 1 matched context; 0 triggered findings
 
 ### Findings
 
@@ -34,6 +34,7 @@ Reviewing a hypothetical deployment script (`deploy.sh`).
 - **Overall Rating**: Minor
 - One defensive coding gap; deployment logic is sound.
 - [ ] Add nullglob or existence guard before rm glob
+- Evolution check: no new patterns discovered
 ```
 
 ---
@@ -84,7 +85,7 @@ Reviewing a hypothetical MR analysis script (`mr_analysis.R`).
 **Target Type**: Code
 **Coverage**: Full — all 85 lines reviewed
 **Blast Radius**: N/A — standalone content
-**Pitfalls Check**: checked N entries; 3 matched context; 1 triggered finding
+**Pitfalls Check**: checked 11 entries; 3 matched context; 1 triggered finding
 
 ### Findings
 
@@ -105,6 +106,7 @@ Reviewing a hypothetical MR analysis script (`mr_analysis.R`).
 - Two standards/completeness gaps in statistical reporting and reproducibility.
 - [ ] Add set.seed(19705) before random operations
 - [ ] Replace significance labels with effect sizes and CIs
+- Evolution check: no new patterns discovered
 ```
 
 ---
@@ -121,7 +123,7 @@ Reviewing a hypothetical data processing script (`clean_data.R`).
 **Target Type**: Code
 **Coverage**: Full — all 120 lines reviewed
 **Blast Radius**: Scope: cwd; scanned 4 files; 0 stale references
-**Pitfalls Check**: checked N entries; 2 matched context; 0 triggered findings
+**Pitfalls Check**: checked 11 entries; 2 matched context; 0 triggered findings
 
 ### Findings
 
@@ -136,6 +138,7 @@ Reviewing a hypothetical data processing script (`clean_data.R`).
 - **Overall Rating**: Critical
 - Incorrect BMI calculation produces wrong values for all records.
 - [ ] Fix BMI formula to use height squared
+- Evolution check: no new patterns discovered
 ```
 
 ---
@@ -152,7 +155,7 @@ Reviewing a hypothetical agent skill (`summarize.md`).
 **Target Type**: Skill/Prompt
 **Coverage**: Full — all 40 lines reviewed
 **Blast Radius**: N/A — standalone content
-**Pitfalls Check**: checked N entries; 1 matched context; 0 triggered findings
+**Pitfalls Check**: checked 11 entries; 1 matched context; 0 triggered findings
 
 ### Findings
 
@@ -167,6 +170,7 @@ Reviewing a hypothetical agent skill (`summarize.md`).
 - **Overall Rating**: Minor
 - One trigger-boundary inconsistency between frontmatter and body.
 - [ ] Align description with body trigger rule
+- Evolution check: no new patterns discovered
 ```
 
 ---
@@ -185,3 +189,44 @@ Demonstrating how to handle ambiguous findings.
 - **问题**：第 15 行硬编码 `n_bootstrap = 100`；可能不足以得到稳定的 CI 估计，但充分性取决于数据分布
 - **可通过以下方式确认**：运行收敛诊断或引用证明 100 次迭代足够的 power analysis
 ```
+
+---
+
+## Evolution Proposal Example / 进化提议示例
+
+Demonstrating a well-formed proposal appended after the Summary section.
+展示一个格式正确的进化提议，附加在总结部分之后。
+
+```
+### Evolution Proposal
+
+> 🔄 **Proposed Evolution**
+>
+> **Type**: pitfall
+> **Draft entry**:
+> `- **同文件内多处引用同一数值** [file-modification]: 文档中同一数值（行数、版本号、文件数等）出现在多处时，修改一处必须全文搜索其他引用点。`
+> **Rationale**: Existing pitfall "多文件版本号一致性" covers version numbers across files, but not repeated numerical claims within a single document (e.g., "~30 lines" stated in 3 places).
+> **Action**: "Add to pitfalls.md"
+>
+> *Approve / modify / reject?*
+```
+
+**Anti-pattern / 反模式**: proposing something already covered.
+反模式：提议已有覆盖的内容。
+
+```
+### Evolution Proposal
+
+> 🔄 **Proposed Evolution**
+>
+> **Type**: pitfall
+> **Draft entry**:
+> `- **版本号要统一** [file-modification]: 多个文件的版本号必须一致。`
+> **Rationale**: Version numbers are sometimes inconsistent.
+> **Action**: "Add to pitfalls.md"
+>
+> *Approve / modify / reject?*
+```
+
+✗ This duplicates existing pitfall "多文件版本号一致性". Write Mechanics requires scanning for semantic overlap before proposing — this should have been caught and merged instead.
+✗ 与现有条目"多文件版本号一致性"语义重叠。写入机制要求提议前扫描重叠——应识别后建议合并而非新增。

@@ -7,14 +7,23 @@ Dates represent when the version was committed to the repo, not when development
 本文件记录所有重要变更。仅记录 0.1 及以上的版本增量；0.0.1 级别的修补不记录。
 日期为提交至 repo 的时间，非开发开始时间。
 
-## [v0.6] — 2026-03-17
+## [v0.6] — 2026-03-17 (patched 2026-03-18)
+
+### Patched (2026-03-18)
+
+- **README ability claim narrowed**: "automatically incorporate project rules" → "prioritise if already loaded in context; does not search or load on its own"
+- **EN/ZH semantic drift fixed**: SKILL_ZH.md "三步联检规则" → "联动更新规则" to match EN "linked-update rules"
+- **Frontmatter description tightened**: added "starts with ---qc" / "以 ---qc 开头" to match body's first-token rule
+- **Blast radius boundary clarified**: explicit note that scan does not reach fixed paths outside workspace; encode external deps as pitfalls entries
+- **Pitfalls tag system simplified**: mixed-dimension tags (`[config/skill/file-modification]`, `[code/script/R/Python]`) → single-dimension (`[file-modification]`, `[code/R/Python]`); added tag dimension guidance
+- **Pitfalls description corrected**: "illustrative defaults" → "starter entries (active during reviews)" across README
+- **examples.md Good Example aligned**: removed `(Code)` from Review Target to match template
 
 ### Added
 
 - **Evolution Protocol**: post-review self-reflection mechanism that proposes new pitfalls/examples entries when QC encounters scenarios not covered by existing rules. Propose-and-confirm design: skill suggests, user approves before any file is written.
 - **Write Mechanics**: specifies append location, provenance comments (`<!-- via: evolution-proposal, YYYY-MM-DD -->`), and semantic overlap detection before writing.
 - **Provenance comments** in `pitfalls.md`: optional `<!-- via: -->` trailing comment to distinguish auto-proposed from manually added entries.
-- **Prerequisites section** in README.md: documents runtime requirements and broadens compatibility claim to AI agents with file-reading and text-searching capabilities.
 
 ### Changed
 

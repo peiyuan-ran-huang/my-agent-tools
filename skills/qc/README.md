@@ -48,7 +48,7 @@ This project does **not** represent the views of my employer or affiliated insti
 | `SKILL.md` | English | Primary (loaded by Claude Code; core framework adaptable to other agents) |
 | `SKILL_ZH.md` | 中文 | Translation reference (not auto-loaded) |
 | `examples.md` | EN/ZH | Output calibration: good example + anti-patterns |
-| `pitfalls.md` | Any | User pitfalls ("错题本"); ships with illustrative defaults |
+| `pitfalls.md` | Any | User pitfalls ("错题本"); ships with starter entries (active during reviews) |
 | `CHANGELOG.md` | EN/ZH | Version history (0.1+ increments only) |
 | `README.md` | EN/ZH | This file; project overview and usage guide |
 
@@ -58,21 +58,21 @@ Changes to `SKILL.md` and `SKILL_ZH.md` **must** be mirrored in each other.
 
 ## Prerequisites / 前置条件
 
-**Required for full functionality / 完整功能必需**: [Claude Code](https://claude.ai/claude-code) or other similar AI agents with file-reading and text-searching capabilities — provides the Read and Grep tools used for file loading, blast radius scanning, and session-aware auto-detection. The core five-dimensional review framework can also be used by any AI agent that reads markdown instructions, with reduced automation. No additional software, packages, or API keys needed — zero external dependencies beyond the runtime itself.
+**Required for full functionality / 完整功能必需**: [Claude Code](https://claude.ai/claude-code) (or other similar AI agents with file-reading and text-searching capabilities) — provides the Read and Grep tools used for file loading, blast radius scanning, and session-aware auto-detection. The core five-dimensional review framework can also be used by any AI agent that reads markdown instructions, with reduced automation. No additional software, packages, or API keys needed — zero external dependencies beyond the runtime itself.
 
-**完整功能必需**：[Claude Code](https://claude.ai/claude-code) 或其他类似的具备文件读取和文本搜索能力的 AI agents——提供 Read 和 Grep 工具，用于文件加载、影响范围扫描和会话感知的自动检测。核心五维审查框架也可被任何能读取 markdown 指令的 AI agent 使用，但自动化程度会降低。无需额外安装软件、包或 API 密钥——除运行时本身外零外部依赖。
+**完整功能必需**：[Claude Code](https://claude.ai/claude-code)（或其他类似的具备文件读取和文本搜索能力的 AI agents）——提供 Read 和 Grep 工具，用于文件加载、影响范围扫描和会话感知的自动检测。核心五维审查框架也可被任何能读取 markdown 指令的 AI agent 使用，但自动化程度会降低。无需额外安装软件、包或 API 密钥——除运行时本身外零外部依赖。
 
 **Included & customisable / 随附且可自定义**:
 
 - `examples.md` — output format and severity calibration; edit to adjust how strict or lenient reviews are
-- `pitfalls.md` — user pitfall log ("错题本"); ships with illustrative defaults, but its real value comes from adding your own domain-specific entries over time
+- `pitfalls.md` — user pitfall log ("错题本"); ships with starter entries that are actively checked during reviews, but its real value comes from adding your own domain-specific entries over time
 
 - `examples.md`——输出格式与严重性校准；可编辑以调整审查的严格/宽松程度
-- `pitfalls.md`——用户错题本；附带示例默认条目，但其真正价值在于随时间积累你自己的领域特定条目
+- `pitfalls.md`——用户错题本；附带初始条目（审查时会被实际检查），但其真正价值在于随时间积累你自己的领域特定条目
 
-**Optional enhancement / 可选增强**: If your Claude Code environment includes project-level rule files (e.g., `rules/academic-workflow.md` for citation and statistical reporting standards), qc will automatically incorporate them into relevant dimensions — no configuration needed.
+**Optional enhancement / 可选增强**: If project-level rule files (e.g., `rules/academic-workflow.md`) are already loaded in the current context, qc will prioritise them in relevant dimensions — no extra configuration needed, but qc does not search for or load these files on its own.
 
-**可选增强**：如果你的 Claude Code 环境中有项目级规则文件（如 `rules/academic-workflow.md` 用于引用和统计报告标准），qc 会自动将其纳入相关维度——无需配置。
+**可选增强**：如果项目级规则文件（如 `rules/academic-workflow.md`）已加载到当前上下文中，qc 会在相关维度优先应用它们——无需额外配置，但 qc 不会主动搜索或加载这些文件。
 
 ## Trigger / 触发方式
 
@@ -111,9 +111,9 @@ Changes to `SKILL.md` and `SKILL_ZH.md` **must** be mirrored in each other.
 
 ## Pitfalls / 错题本
 
-`pitfalls.md` is your personal pitfall log. Record mistakes and easily-overlooked issues you encounter in daily work — each entry becomes an additional check item during QC reviews. The template ships with illustrative default entries drawn from the author's workflow; add, modify, or remove entries in any language to match your own.
+`pitfalls.md` is your personal pitfall log. Record mistakes and easily-overlooked issues you encounter in daily work — each entry becomes an additional check item during QC reviews. The file ships with starter entries drawn from the author's workflow that are actively used during reviews; add, modify, or remove entries in any language to match your own.
 
-`pitfalls.md` 是你的个人错题本。把日常工作中遇到的易错点、容易遗漏的问题记录在里面，QC 审查时会自动将每条作为额外检查项。模板附带作者工作流中的示例条目；可按需增删改，用任意语言编写。
+`pitfalls.md` 是你的个人错题本。把日常工作中遇到的易错点、容易遗漏的问题记录在里面，QC 审查时会自动将每条作为额外检查项。文件附带作者工作流中的初始条目（审查时会被实际检查）；可按需增删改，用任意语言编写。
 
 *Note: `sync.sh` will never overwrite your local `pitfalls.md` once it exists — your entries are safe across syncs.*
 
@@ -137,6 +137,6 @@ v0.5 基于 Codex 的第二次全面审查（2026-03-16）——4 个并行 suba
 
 ---
 
-*Built with ☕, 🧠, and Claude Code. Peer review, but make it instant and free.*
+*Built with ☕, 🧠 (but without 🖐️), and Claude Code. Peer review, but make it instant and free.*
 
-*用 ☕、🧠 和 Claude Code 打造。同行评审，但秒出结果且免费。*
+*用 ☕、🧠（但没用🖐️）和 Claude Code 打造。同行评审，但秒出结果且免费。*

@@ -1,26 +1,29 @@
-# QC Pitfalls / QC 错题本
+# QC Pitfalls
 
 <!--
-  INSTRUCTIONS / 使用说明
+  INSTRUCTIONS
 
   This is YOUR personal pitfall log. Add entries for mistakes or oversights
   you've encountered in daily work that QC should watch for. Each entry
   becomes an additional check item during QC reviews.
 
-  这是你的个人错题本。把日常工作中发现的易错点、容易遗漏的问题写在下面，
-  QC 审查时会将每条作为额外检查项。
+  FORMAT:
+  - **Bold title** `[tag]`: One-line description of what to check.
+    No tag = always applicable (same as `[all]`).
+    Matching is contextual (AI judges applicability), not literal.
+    Suggested tags: `[all]`, `[code]`, `[academic]`, `[academic/statistics]`,
+    `[file-modification]`, `[file-path]`, `[code/R/Python]`, `[skill/prompt]`
 
-  FORMAT / 格式:
-  - **Bold title**: One-line description of what to check.
+  PROVENANCE (optional):
+  Entries added via Evolution Protocol may include a trailing HTML comment:
+  `<!-- via: evolution-proposal, YYYY-MM-DD -->`
+  This distinguishes auto-proposed entries from manually added ones.
 
-  LANGUAGE / 语言:
-  Any — this is your file; Claude reads all languages.
-  任意语言均可，Claude 都能读取。
+  LANGUAGE:
+  Any — this is your file; AI agents read all languages.
 -->
 
-## Entries / 条目
+## Entries
 
-<!-- FORMAT EXAMPLES (delete these and add your own):
-- **MEMORY.md 同步** `[config]`: 修改配置文件后检查 MEMORY.md 是否需要更新。
-- **引用真实性** `[academic]`: 参考文献引用可能不准确，或参考文献根本不存在，必须 PubMed/DOI 交叉验证。
--->
+- **MEMORY.md sync after config changes** `[file-modification]`: After modifying config, skill, script, or structured files, check whether MEMORY.md needs a corresponding update.
+- **Citation authenticity** `[academic]`: AI-generated references may be inaccurate or entirely fabricated; always cross-verify against PubMed or DOI.
