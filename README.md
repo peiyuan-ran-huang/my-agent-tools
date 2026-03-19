@@ -1,6 +1,6 @@
 # personal-agentic-skills
 
-Private repository for personal Claude Code skills, synced across devices.
+Private repository for personal AI agent skills, synced across devices.
 
 ## Structure
 
