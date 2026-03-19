@@ -26,4 +26,4 @@
 ## Entries
 
 - **MEMORY.md sync after config changes** `[file-modification]`: After modifying config, skill, script, or structured files, check whether MEMORY.md needs a corresponding update.
-- **Citation authenticity** `[academic]`: AI-generated references may be inaccurate or entirely fabricated; always cross-verify against PubMed or DOI.
+- **Citation authenticity** `[academic]`: References may be inaccurate or entirely fabricated; always cross-verify against PubMed or DOI.
