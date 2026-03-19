@@ -19,7 +19,7 @@ Reviewing a hypothetical deployment script (`deploy.sh`).
 **Target Type**: Code
 **Coverage**: Full — all 45 lines reviewed
 **Blast Radius**: N/A — standalone content
-**Pitfalls Check**: checked 11 entries; 1 matched context; 0 triggered findings
+**Pitfalls Check**: checked N entries; 1 matched context; 0 triggered findings
 
 ### Findings
 
@@ -85,14 +85,14 @@ Reviewing a hypothetical MR analysis script (`mr_analysis.R`).
 **Target Type**: Code
 **Coverage**: Full — all 85 lines reviewed
 **Blast Radius**: N/A — standalone content
-**Pitfalls Check**: checked 11 entries; 3 matched context; 1 triggered finding
+**Pitfalls Check**: checked N entries; 3 matched context; 1 triggered finding
 
 ### Findings
 
 #### Completeness — Major
 - **Evidence**: absent: expected `set.seed()` call before `sample()` on line 42, but not found in file
 - **Issue**: Random sampling without seed compromises reproducibility
-- **Suggested fix**: Add `set.seed(19705)` before line 42
+- **Suggested fix**: Add `set.seed(7)` before line 42
 
 #### Standards — Major
 - **Evidence**: `p_value < 0.05` (line 67) used to label results as "significant"
@@ -104,7 +104,7 @@ Reviewing a hypothetical MR analysis script (`mr_analysis.R`).
 ### Summary
 - **Overall Rating**: Major
 - Two standards/completeness gaps in statistical reporting and reproducibility.
-- [ ] Add set.seed(19705) before random operations
+- [ ] Add set.seed(7) before random operations
 - [ ] Replace significance labels with effect sizes and CIs
 - Evolution check: no new patterns discovered
 ```
@@ -123,7 +123,7 @@ Reviewing a hypothetical data processing script (`clean_data.R`).
 **Target Type**: Code
 **Coverage**: Full — all 120 lines reviewed
 **Blast Radius**: Scope: cwd; scanned 4 files; 0 stale references
-**Pitfalls Check**: checked 11 entries; 2 matched context; 0 triggered findings
+**Pitfalls Check**: checked N entries; 2 matched context; 0 triggered findings
 
 ### Findings
 
@@ -155,7 +155,7 @@ Reviewing a hypothetical agent skill (`summarize.md`).
 **Target Type**: Skill/Prompt
 **Coverage**: Full — all 40 lines reviewed
 **Blast Radius**: N/A — standalone content
-**Pitfalls Check**: checked 11 entries; 1 matched context; 0 triggered findings
+**Pitfalls Check**: checked N entries; 1 matched context; 0 triggered findings
 
 ### Findings
 

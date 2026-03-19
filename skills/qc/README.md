@@ -1,7 +1,7 @@
 # QC: Five-Dimensional Deep Review / 五维深度审查
 
 **Version**: v0.6.0
-**Last Updated**: 2026-03-17
+**Last Updated**: 2026-03-19
 **Author**: Peiyuan (Ran) Huang, with (*significant*) assistance from Claude Code
 
 ---
