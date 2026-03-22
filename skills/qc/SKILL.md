@@ -3,7 +3,7 @@ name: qc
 description: Use when the user's message starts with ---qc to request a structured five-dimensional review of code, plans, documents, data, advice, or skills/prompts.
 ---
 
-<!-- version: 0.7.0 | SYNC RULE: Changes to this file MUST be mirrored in SKILL_ZH.md.
+<!-- version: 0.8.0 | SYNC RULE: Changes to this file MUST be mirrored in SKILL_ZH.md.
 Allowed differences: (1) frontmatter `name` (qc vs qc-zh), (2) frontmatter `description` language,
 (3) loading behavior note in SKILL_ZH.md. Sync metric: semantic equivalence per section, NOT line-count equality. -->
 
@@ -20,7 +20,7 @@ You now assume the role of **strict reviewer**. Conduct a thorough, meticulous, 
 
 ## Parameter Parsing
 
-1. Read args after `---qc`: the first semantic unit is the review target (a single word, a quoted phrase, or a file path — **file paths containing spaces must be quoted with double quotes**, e.g., `---qc "OneDrive - University of Bristol/file.R"`; if unquoted path-like tokens containing spaces are detected, ask the user to re-invoke with quotes); the rest are additional criteria
+1. Read args after `---qc`: the first semantic unit is the review target (a single word, a quoted phrase, or a file path — **file paths containing spaces must be quoted with double quotes**, e.g., `---qc "OneDrive - University of Bristol/file.R"`; if unquoted path-like tokens containing spaces are detected, ask the user to re-invoke with quotes); the rest are additional criteria. After extracting target and criteria, scan remaining tokens for `--loop`/`--循环`; if followed by an integer use it as N, else default N=3. If found, activate **Loop Mode** (see below).
 2. Target mapping: 代码/code → Code | 方案/plan → Plan | 文档/doc → Document | 数据/data → Data | 建议/advice → Advice | skill/prompt/技能/提示词 → Skill/Prompt | diff/changeset/directory/目录 → Code overlay (blast-radius scope = diff/directory); for mixed content → select the primary type based on the user's question focus or content proportion; overlay checks from secondary types
 3. No arguments → auto-detect using this priority:
    1. File path mentioned in the user's current message
@@ -28,6 +28,19 @@ You now assume the role of **strict reviewer**. Conduct a thorough, meticulous, 
    3. Most recently edited or read file in the session
    4. (Fallback) Prompt the user to specify
 4. If target content is not in current context but a clear file path or recently edited file exists → use Read to load the file before reviewing; for oversized files → read in segments, prioritising core logic sections
+
+## Loop Mode (activated by `--loop [N]` / `--循环 [N]`)
+
+When `--loop` is present, execute a review-fix-review cycle:
+
+1. Run standard QC review on the target
+2. **Pass** → increment consecutive pass counter; **Not Pass** → reset counter to 0, fix all findings (Critical → Major → Minor), then re-review
+3. Exit when: consecutive passes >= N (default 3), or total rounds >= 10
+4. Each round starts with: `🔄 Round X/10 | Passes: Y/N | History: [P, M, m, P, ...]` (P=Pass, C=Critical, M=Major, m=Minor)
+5. Target is resolved once at invocation; subsequent rounds re-review the same target (files: re-read from disk; in-context content: review latest version)
+6. Calibration files (examples.md, pitfalls.md): read once at start. Evolution Protocol: final round only.
+
+In loop mode, the "review only — no auto-fixes" principle is suspended: Claude fixes findings between rounds. If a fix requires user input, pause and ask. For consecutive pass rounds, a brief confirmation suffices (state header + overall rating).
 
 ## Blast Radius Scan (file modifications only)
 
@@ -115,7 +128,7 @@ Use the following template:
 
 - **Output calibration**: Before writing the report, read `examples.md` (format/severity calibration) and `pitfalls.md` (user-specified check items) from this skill's directory (`~/.claude/skills/qc/`). For each pitfall entry, first assess whether its trigger tag (if present) matches the current review target type and context; only apply matching entries. In the Pitfalls Check output line, report: checked X entries; Y matched context; Z triggered findings. If `pitfalls.md` grows beyond ~30 entries, scan tags/headings first and read only matching sections in full. If either file is unavailable or empty, proceed without it.
 - **Pitfalls tag matching rules**: `[tag1/tag2]` — `/` means OR; an entry applies if ANY listed tag matches the current context. No tag = always applicable (same as `[all]`). Matching is contextual (AI judges applicability), not a literal string comparison against the target type name. Suggested tags: `[all]`, `[code]`, `[academic]`, `[academic/statistics]`, `[file-modification]`, `[file-path]`, `[code/R/Python]`, `[skill/prompt]`. Keep tags within a single dimension (object type OR action context OR language); avoid mixing dimensions in one OR group.
-- **Review only — no auto-fixes**: Output the review report only. Do not modify any content automatically. Fixes are the user's decision.
+- **Review only — no auto-fixes**: Output the review report only. Do not modify any content automatically. Fixes are the user's decision. (This principle is suspended when `--loop` is active — see **Loop Mode** above.)
 - **Evidence-led, not suspicion-led**: Every finding in the Findings section must have concrete evidence (direct quote, file:line, code snippet, or explicit absence citation). Uncertain items without sufficient evidence → place in the **Open Questions** section instead. Goal: zero missed real issues — but suspicions without evidence are questions, not findings.
 - **Reference project-level academic rules**: If academic workflow rules (e.g., citation verification, numerical reporting standards) are present in the current context, prioritise them.
 - **Additional criteria take priority**: User-specified additional criteria are checked first, on top of the five-dimensional framework.

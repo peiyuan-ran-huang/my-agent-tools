@@ -7,6 +7,18 @@ Dates represent when the version was committed to the repo, not when development
 本文件记录所有重要变更。仅记录 0.1 及以上的版本增量；0.0.1 级别的修补不记录。
 日期为提交至 repo 的时间，非开发开始时间。
 
+## [v0.8] — 2026-03-22
+
+### Added
+
+- **Loop Mode** (`--loop [N]` / `--循环 [N]`): automated review-fix-review cycle that repeats until N consecutive passes (default 3) or 10 total rounds. Suspends "review only — no auto-fixes" principle during the loop. Target resolved once at invocation; calibration files read once; Evolution Protocol on final round only.
+- Loop mode example added to `examples.md`.
+
+### Changed
+
+- Parameter Parsing step 1 extended to scan for `--loop`/`--循环` flag after target and criteria extraction.
+- Key Principles: "Review only — no auto-fixes" now notes loop mode suspension.
+
 ## [v0.7] — 2026-03-20
 
 ### Added

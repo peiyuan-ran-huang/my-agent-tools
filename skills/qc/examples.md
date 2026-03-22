@@ -230,3 +230,41 @@ Demonstrating a well-formed proposal appended after the Summary section.
 
 ✗ This duplicates existing pitfall "多文件版本号一致性". Write Mechanics requires scanning for semantic overlap before proposing — this should have been caught and merged instead.
 ✗ 与现有条目"多文件版本号一致性"语义重叠。写入机制要求提议前扫描重叠——应识别后建议合并而非新增。
+
+---
+
+## Loop Mode Example / 循环模式示例
+
+Demonstrating a `--loop` review-fix cycle on a hypothetical script.
+展示对一个假设脚本的 `--loop` 审查-修复循环。
+
+```
+🔄 Round 1/10 | Passes: 0/3 | History: []
+
+## QC Review Report
+**Review Target**: preprocess.R
+**Target Type**: Code
+...
+#### Completeness — Minor
+- **Evidence**: absent: no `set.seed()` before `sample()` on line 22
+- **Issue**: Random sampling without seed
+- **Suggested fix**: Add `set.seed(7)` before line 22
+### Summary
+- **Overall Rating**: Minor
+
+--- [Claude fixes: adds set.seed(7)] ---
+
+🔄 Round 2/10 | Passes: 0/3 | History: [m]
+✓ All dimensions: No issues
+**Overall Rating**: Pass
+
+🔄 Round 3/10 | Passes: 1/3 | History: [m, P]
+✓ All dimensions: No issues
+**Overall Rating**: Pass
+
+🔄 Round 4/10 | Passes: 2/3 | History: [m, P, P]
+✓ All dimensions: No issues
+**Overall Rating**: Pass
+
+[Loop complete: 3/3 consecutive passes achieved in 4 rounds]
+```
