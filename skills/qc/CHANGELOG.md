@@ -12,6 +12,9 @@ Dates represent when the version was committed to the repo, not when development
 ### Added
 
 - **Loop Mode** (`--loop [N]` / `--循环 [N]`): automated review-fix-review cycle that repeats until N consecutive passes (default 3) or 10 total rounds. Suspends "review only — no auto-fixes" principle during the loop. Target resolved once at invocation; calibration files read once; Evolution Protocol on final round only.
+- **Counterfactual Test**: mandatory meta-calibration question for all ratings — "If this exact target were submitted by a stranger for first-time review, would I still find no Critical or Major issues?" Requires specific reasoning (file:line or logic point), not rubber-stamp "Confirmed". Summary template includes `**Counterfactual**:` line with Confirmed/Reopened options (no N/A escape).
+- **Adversarial Re-framing** (Loop Mode): in rounds 2+, reviewer adopts stance "This was written by someone else. My job is to find problems, not confirm correctness." Counteracts confirmation bias when reviewing own fixes.
+- Counterfactual good/anti-pattern examples added to `examples.md` (standard + Loop Mode pairs).
 - Loop mode example added to `examples.md`.
 
 ### Changed
