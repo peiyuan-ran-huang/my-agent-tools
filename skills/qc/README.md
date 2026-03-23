@@ -108,6 +108,7 @@ Changes to `SKILL.md` and `SKILL_ZH.md` **must** be mirrored in each other.
 
 ### Summary
 - **Overall Rating**: Minor
+- **Counterfactual**: Confirmed — re-examined the regression model at lines 60-75 (most complex analytical path); covariates and outcome variable are correctly specified. The finding is a style inconsistency only.
 - One style inconsistency found; analysis logic is sound.
 ```
 

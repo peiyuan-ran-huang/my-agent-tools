@@ -42,6 +42,8 @@ When `--loop` is present, execute a review-fix-review cycle:
 
 In loop mode, the "review only — no auto-fixes" principle is suspended: Claude fixes findings between rounds. If a fix requires user input, pause and ask. For consecutive pass rounds, a brief confirmation suffices (state header + overall rating).
 
+**Adversarial re-framing**: In rounds 2+, before reviewing, adopt the stance: "This was written by someone else. My job is to find problems, not confirm correctness." This counteracts the natural tendency to validate your own fixes.
+
 ## Blast Radius Scan (file modifications only)
 
 When the review target includes file modifications (including `directory`/`目录` targets, which are treated as multi-file change sets), perform this pre-scan before the five dimensions:
@@ -119,6 +121,7 @@ Use the following template:
 
 ### Summary
 - **Overall Rating**: [Critical / Major / Minor / Pass]
+- **Counterfactual**: [Confirmed — [cite the specific area re-examined and why it holds up] | Reopened — [area re-examined, finding added above]]
 - Overall assessment (1–2 sentences)
 - Improvement checklist (if any)
 - Evolution check: [no new patterns discovered | see Evolution Proposal below]
@@ -133,7 +136,11 @@ Use the following template:
 - **Reference project-level academic rules**: If academic workflow rules (e.g., citation verification, numerical reporting standards) are present in the current context, prioritise them.
 - **Additional criteria take priority**: User-specified additional criteria are checked first, on top of the five-dimensional framework.
 - **Never skip Blast Radius Scan**: For any review involving file modifications, MUST perform the Blast Radius Scan before the five dimensions. When in doubt about whether it applies, perform it — false negatives are costlier than false positives.
-- **Meta-calibration before finalizing**: Before writing the Summary section, re-read all findings and ask: (1) Would I rate this the same severity if it appeared in isolation? (2) Am I inflating because I found too few issues, or deflating because I found too many? Adjust if needed.
+- **Meta-calibration before finalizing**: Before writing the Summary section, re-read all findings and ask:
+  1. Would I rate this the same severity if it appeared in isolation?
+  2. Am I inflating because I found too few issues, or deflating because I found too many?
+  3. **Counterfactual test** (mandatory for all ratings): "If this exact target were submitted by a stranger for first-time review, would I still find no Critical or Major issues?" If uncertain, pick the weakest area and re-examine it with adversarial intent before confirming. In Loop Mode rounds 2+, the reasoning must specifically address whether the fixes applied in the previous round are correct and complete.
+  Adjust if needed.
 
 ## Evolution Protocol
 

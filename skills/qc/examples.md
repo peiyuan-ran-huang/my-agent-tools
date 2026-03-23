@@ -32,6 +32,7 @@ Reviewing a hypothetical deployment script (`deploy.sh`).
 
 ### Summary
 - **Overall Rating**: Minor
+- **Counterfactual**: Confirmed — re-examined the deployment target path construction at lines 8-12 (most likely source of a silent-but-dangerous error); path is built from validated env vars with fallback defaults. A fresh reviewer would agree this is sound.
 - One defensive coding gap; deployment logic is sound.
 - [ ] Add nullglob or existence guard before rm glob
 - Evolution check: no new patterns discovered
@@ -103,6 +104,7 @@ Reviewing a hypothetical MR analysis script (`mr_analysis.R`).
 
 ### Summary
 - **Overall Rating**: Major
+- **Counterfactual**: Confirmed — re-examined the IVW estimation logic at lines 30-40 (core MR calculation); instrument selection and F-statistic filtering are correctly applied. The Major findings are in reporting format, not analytical correctness.
 - Two standards/completeness gaps in statistical reporting and reproducibility.
 - [ ] Add set.seed(7) before random operations
 - [ ] Replace significance labels with effect sizes and CIs
@@ -136,6 +138,7 @@ Reviewing a hypothetical data processing script (`clean_data.R`).
 
 ### Summary
 - **Overall Rating**: Critical
+- **Counterfactual**: Confirmed — re-examined lines 30-36 (the data transformation block containing the BMI error); no additional Critical issues beyond the formula error. The merge logic and unit conversions above are correct.
 - Incorrect BMI calculation produces wrong values for all records.
 - [ ] Fix BMI formula to use height squared
 - Evolution check: no new patterns discovered
@@ -168,6 +171,7 @@ Reviewing a hypothetical agent skill (`summarize.md`).
 
 ### Summary
 - **Overall Rating**: Minor
+- **Counterfactual**: Confirmed — re-examined the parameter parsing section (lines 15-25) for edge cases with quoted paths and empty input; parsing rules are complete and unambiguous. The finding is limited to the frontmatter/body mismatch.
 - One trigger-boundary inconsistency between frontmatter and body.
 - [ ] Align description with body trigger rule
 - Evolution check: no new patterns discovered
@@ -257,6 +261,7 @@ Demonstrating a `--loop` review-fix cycle on a hypothetical script.
 🔄 Round 2/10 | Passes: 0/3 | History: [m]
 ✓ All dimensions: No issues
 **Overall Rating**: Pass
+**Counterfactual**: Confirmed — re-examined the set.seed(7) fix at line 22: seed is placed immediately before sample(), and no other random operations exist between seed and usage. The fix is correct and complete.
 
 🔄 Round 3/10 | Passes: 1/3 | History: [m, P]
 ✓ All dimensions: No issues
@@ -267,4 +272,63 @@ Demonstrating a `--loop` review-fix cycle on a hypothetical script.
 **Overall Rating**: Pass
 
 [Loop complete: 3/3 consecutive passes achieved in 4 rounds]
+```
+
+---
+
+## Meta-calibration: Counterfactual — 好示例
+
+场景：审查一个 R 脚本，五维审查未发现 Critical/Major，整体评级 Minor。
+
+```
+### Summary
+- **Overall Rating**: Minor
+- **Counterfactual**: Confirmed — re-examined the join logic at lines 42-58 (most complex path with potential for silent row duplication); left_join keys are unique on both sides (verified via distinct check at line 38), and the downstream filter at line 60 would catch any unexpected expansion. A fresh reviewer would likely agree this is clean.
+- Overall assessment: Minor style issues only. Core logic is sound.
+- Improvement checklist: use explicit `.by` in joins for clarity
+- Evolution check: no new patterns discovered
+```
+
+### Anti-pattern: 橡皮章 Counterfactual
+
+```
+### Summary
+- **Overall Rating**: Pass
+- **Counterfactual**: Confirmed — looks good, no issues found
+- Overall assessment: Clean code, well structured.
+
+错误：Counterfactual reasoning 没有引用任何具体审查区域，
+等同于橡皮图章。有效的 counterfactual 必须指向至少一个
+具体区域并说明为何经得起审视。对照 pitfalls.md 条目：
+"若 reasoning 不含具体文件/行号/逻辑点引用，视为未执行"。
+```
+
+---
+
+## Loop Mode Counterfactual — 好示例
+
+场景：Loop Mode 第 3 轮，上一轮修复了 line 42 的 off-by-one error，本轮审查整体评级 Minor。
+
+```
+🔄 Round 3/10 | Passes: 0/3 | History: [M, m, ...]
+
+### Summary
+- **Overall Rating**: Minor
+- **Counterfactual**: Confirmed — re-examined the off-by-one fix at line 42 (changed `<` to `<=`): the loop bound now matches the array length, and the downstream assertion at line 48 validates the boundary. Also checked whether the fix introduced any new edge case for empty arrays — the guard at line 40 handles this. A fresh reviewer would agree the fix is correct and complete.
+- Overall assessment: Previous fix is sound. Remaining Minor: variable naming at line 55.
+```
+
+### Anti-pattern: Loop Mode 橡皮章
+
+```
+🔄 Round 3/10 | Passes: 0/3 | History: [M, m, ...]
+
+### Summary
+- **Overall Rating**: Pass
+- **Counterfactual**: Confirmed — fix looks correct
+- Overall assessment: All issues resolved.
+
+错误：(1) 未引用上一轮具体修复位置（line 42 的 off-by-one）。
+(2) 未验证修复是否引入新问题。Loop Mode 下 counterfactual 必须
+具体指向上一轮修复并说明其正确性和完整性。
 ```
