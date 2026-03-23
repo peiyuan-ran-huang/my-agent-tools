@@ -1,5 +1,5 @@
-<p align=”center”>
-  <img src=”sharingan.jpg” alt=”Sharingan” width=”280” />
+<p align="center">
+  <img src="sharingan.jpg" alt="Sharingan" width="280" />
   <br>
   <em>”你的剑就是我的剑”</em>
 </p>
