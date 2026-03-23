@@ -43,14 +43,14 @@ Dates represent when the version was committed, not when development started.
 
 ### Changed
 
-- Rationalization Table (28 entries) and Red Flags Checklist (22 items) formalized in `references/tdd-summary.md`.
+- Rationalization Table (28 entries) and Red Flags Checklist (22 items) formalised in `references/tdd-summary.md`.
 
 ## [v0.1.0] — 2026-03-17
 
 ### Added
 
 - Initial release: 10-phase workflow for extracting insights from external resources.
-- Dual EXIT POINTs (Phase 3 and Phase 5) normalizing "no changes" as legitimate outcome.
+- Dual EXIT POINTs (Phase 3 and Phase 5) normalising "no changes" as legitimate outcome.
 - 13-category taxonomy (`taxonomy.md`).
 - Security preflight (deny list for credentials, prompt injection detection).
 - Inline QC sub-procedure (2 consecutive passes, max 6 rounds).

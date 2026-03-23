@@ -331,7 +331,7 @@ Phase 10 是最脆弱的 phase（TDD 发现完成偏误防御最薄弱），
 - Single-file constraint: only one file editable, keeps scope manageable
 - Fixed time budget: 5 min wall clock per experiment for fair comparison
 - Simplicity criterion: complexity cost vs improvement magnitude
-**When to reference**: Iterative analysis optimization or automated code iteration workflows
+**When to reference**: Iterative analysis optimisation or automated code iteration workflows
 
 Save as reference memory? (Y / N / custom title)
 

@@ -4,7 +4,7 @@
   <em>”你的剑就是我的剑”</em>
 </p>
 
-# Sharingan: Self-Optimization via External Resources / 写轮眼：外部资源自优化
+# Sharingan: Self-Optimisation via External Resources / 写轮眼：外部资源自优化
 
 **Version**: v0.7.1
 **Last Updated**: 2026-03-23
@@ -15,15 +15,15 @@
 
 ## Why "Sharingan"? / 为什么叫"写轮眼"？
 
-In *Naruto*, the Sharingan can instantly copy and absorb others' techniques. This skill does something similar — it reads external resources (GitHub repos, blog posts, config files, etc.) and extracts actionable insights to optimize your Claude Code setup. Copy, adapt, improve.
+In *Naruto*, the Sharingan can instantly copy and absorb others' techniques. This skill does something similar — it reads external resources (GitHub repos, blog posts, config files, etc.) and extracts actionable insights to optimise your Claude Code setup. Analyse, learn, optimise.
 
-火影忍者里的写轮眼能瞬间复制和吸收他人的技术。这个 skill 做的事差不多——读取外部资源（GitHub 仓库、博客、配置文件等），提取可操作的洞察来优化你的 Claude Code 配置。复制，适配，进化。
+火影忍者里的写轮眼能瞬间复制和吸收他人的技术。这个 skill 做的事差不多——读取外部资源（GitHub 仓库、博客、配置文件等），提取可操作的洞察来优化你的 Claude Code 配置。分析，学习，优化。
 
 ## What is this? / 这是什么？
 
 A prompt-only skill (no code, no dependencies) that provides a structured 10-phase workflow for extracting insights from external resources and applying them to your Claude Code configuration. It includes:
 
-- **Dual EXIT POINTs** — normalizes "no changes needed" as a legitimate outcome (Phase 3 and Phase 5), fighting the action bias that plagues AI agents
+- **Dual EXIT POINTs** — normalises "no changes needed" as a legitimate outcome (Phase 3 and Phase 5), fighting the action bias that plagues AI agents
 - **13-category taxonomy** — classifies insights across skills, hooks, MCP, security, memory, and more
 - **Built-in QC** — inline quality checks requiring 2 consecutive passes (max 6 rounds) before changes are applied
 - **Reference Value Assessment** — even when no config changes are warranted, optionally captures long-term reference value from the source
@@ -54,6 +54,16 @@ If you find something useful, feel free to adapt it. But don't expect plug-and-p
 - **有主见** — 反映的是*我*希望 agent 如何处理外部资源，未必适合你
 
 如果你觉得有用，欢迎自行适配。但别指望开箱即用。
+
+## Content & Copyright / 内容与版权
+
+This skill reads publicly available resources and extracts structural patterns to inform your personal configuration. It does not reproduce, store, or redistribute original content. Source material is processed transiently in the agent's context window and discarded after insight extraction.
+
+Users are responsible for ensuring their use of this skill complies with applicable copyright laws and the terms of service of any platforms or resources they access. This skill is intended for use with publicly available, open-source, or user-owned content.
+
+本 skill 读取公开资源并提取结构性模式，用于优化你的个人配置。它不复制、存储或再分发原始内容。源材料仅在 agent 上下文窗口中临时处理，洞察提取完成后即丢弃。
+
+用户有责任确保对本 skill 的使用符合适用的版权法律及所访问平台或资源的服务条款。本 skill 仅供处理公开可用、开源或用户自有的内容。
 
 ## Trigger / 触发方式
 

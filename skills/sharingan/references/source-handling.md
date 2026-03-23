@@ -2,7 +2,7 @@
 
 ## Tool Selection Principles
 
-Choose tools based on source type and rendering requirements. Prefer tools that minimize context window impact (indexed/compressed > raw). Tool names below are current as of v0.5.0; verify availability before use.
+Choose tools based on source type and rendering requirements. Prefer tools that minimise context window impact (indexed/compressed > raw). Tool names below are current as of v0.5.0; verify availability before use.
 
 | Input Type | Preferred Tool | Fallback |
 |-----------|---------------|----------|

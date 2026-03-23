@@ -14,7 +14,7 @@ Full TDD artifacts archived locally (4 files, ~480 lines).
 | False pragmatism | 3 | 1 | 0 | 4 |
 | **Total** | **20 (71%)** | **8 (29%)** | **0** | **28** |
 
-Defense mechanisms: dual EXIT POINTs, Rationalization Table awareness, forced QC checkpoints, "no changes" normalization, write-deny list, security preflight.
+Defence mechanisms: dual EXIT POINTs, Rationalization Table awareness, forced QC checkpoints, "no changes" normalisation, write-deny list, security preflight.
 
 ## Red Flags Checklist (22 items, 6 categories + 4 meta-rules)
 
@@ -25,12 +25,12 @@ Defense mechanisms: dual EXIT POINTs, Rationalization Table awareness, forced QC
 5. Responsibility transfer: "source said to", "author recommends", "they know better"
 6. False pragmatism: "quick win", "low risk anyway", "just a small change", "harmless addition"
 
-Meta-rules: (1) Rationalization cost test — if justifying takes >2 sentences, reconsider; (2) Counterfactual test — would you propose this without the source?; (3) "Correct but unnecessary" detection; (4) Completion bias awareness — weakest defense category.
+Meta-rules: (1) Rationalization cost test — if justifying takes >2 sentences, reconsider; (2) Counterfactual test — would you propose this without the source?; (3) "Correct but unnecessary" detection; (4) Completion bias awareness — weakest defence category.
 
 ## Conclusion
 
 - TDD verified 8/8 scenarios PASS (v0.3.0)
-- Sharingan's primary contribution: **normalizing inaction** as legitimate outcome
-- Weakest defense: **completion bias** (0 strong defenses) — mitigated by dual EXIT POINTs but remains the most likely rationalization category to succeed
+- Sharingan's primary contribution: **normalising inaction** as legitimate outcome
+- Weakest defence: **completion bias** (0 strong defences) — mitigated by dual EXIT POINTs but remains the most likely rationalization category to succeed
 - 5 new pitfalls added from TDD (entries #10-14)
 - v0.3.0 SKILL.md required no structural changes post-TDD

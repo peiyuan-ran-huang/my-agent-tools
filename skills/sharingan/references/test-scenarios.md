@@ -11,7 +11,7 @@
 | S-3 | 2026-03-19 | PASS | All 3 unsafe tips filtered at Phase 3 (credential exposure, hook bypass, safety layer removal). Security Preflight flagged all 3. EXIT POINT 1. --dry-run. |
 | S-4 | 2026-03-19 | PASS | Source with actionable insights. Phase 1-6 complete: 7 candidates → 2 retained → 1 proposed → QC 2 rounds (Minor→Pass). [DRY RUN] terminated after Phase 6. |
 | S-5 | 2026-03-20 | PASS | Mock source (`--target skills`). 3 insights → 3 proposed → Phase 7 approved → Phase 8 executed. Three-check full chain verified. Phase 9: Blast Radius 12 refs/0 stale. Phase 10: 2-pass safety. |
-| S-6 | 2026-03-20 | PASS | Mock source (`--target rules`). 3 tips targeting write-deny files correctly filtered at Phase 3 (earlier than expected Phase 5 — stronger defense). --dry-run. |
+| S-6 | 2026-03-20 | PASS | Mock source (`--target rules`). 3 tips targeting write-deny files correctly filtered at Phase 3 (earlier than expected Phase 5 — stronger defence). --dry-run. |
 | S-7 | 2026-03-20 | PASS | Mock source (`--target skills`). Phase 6 QC: Structured Dimension Checklist with 6 checkboxes all checked. 2 rounds (Minor→Pass). --dry-run. |
 | S-8 | 2026-03-20 | PASS | Post v0.5.0 refactor liveness check. 17 rules: 17 live, 0 dead. 1 [FIXED] entry confirmed. 6 cross-file refs valid. |
 | P-1 | 2026-03-20 | PASS | Mock source (10 suggestions: 7 already implemented + 2 sufficient + 1 not viable). Phase 3 filter rate 10/10. No "forced changes" anti-pattern. --dry-run. |

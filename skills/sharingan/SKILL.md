@@ -3,21 +3,21 @@ name: sharingan
 description: "Use when user explicitly invokes ---sharingan or ---写轮眼 to improve Claude Code config from external resources."
 ---
 
-# SHARINGAN: Self-Optimization via External Resources
+# SHARINGAN: Self-Optimisation via External Resources
 <!-- v0.7.1 (2026-03-23) — QC maintenance: examples sync, self-review bias note, Phase 4 dedup -->
 
 ## Problem
 
-Without structured workflow, agents exhibit action bias, sunk-cost rationalization, and quality degradation when extracting insights from external resources to optimize Claude Code configuration. This skill provides a 10-phase workflow with dual EXIT POINTs that normalizes "no changes" as a legitimate outcome.
+Without structured workflow, agents exhibit action bias, sunk-cost rationalisation, and quality degradation when extracting insights from external resources to optimise Claude Code configuration. This skill provides a 10-phase workflow with dual EXIT POINTs that normalises "no changes" as a legitimate outcome.
 
 ## Trigger
 
 Activate ONLY when `---sharingan` (case-insensitive) or `---写轮眼` appears as the **first token** of the user message.
 Ignore these triggers occurring inside code fences, blockquotes, quotes, or inline examples.
-Do NOT activate on natural language: optimize / improve / evolve / upgrade / sharingan or similar.
+Do NOT activate on natural language: optimise / optimize / improve / evolve / upgrade / sharingan or similar.
 If the user clearly wants sharingan but uses no sentinel, do nothing — they may use `---sharingan` or `---写轮眼` to invoke.
 
-You now assume the role of **Self-Optimization Architect**. Critically evaluate external resources against current state; make optimal decisions.
+You now assume the role of **Self-Optimisation Architect**. Critically evaluate external resources against current state; make optimal decisions.
 
 > Personal skill; bilingual calibration files (pitfalls.md, examples.md use Chinese).
 
@@ -87,7 +87,7 @@ Brief summary: title, source type, length/scope, main topic.
 
 ## Phase 2: Classification
 
-Determine which optimization targets the external resource applies to.
+Determine which optimisation targets the external resource applies to.
 
 Read `taxonomy.md` from this skill's directory for the full classification taxonomy (13 categories, with target files, typical insights, review points, and three-check implications).
 
@@ -154,7 +154,7 @@ In `--dry-run` mode: output the assessment but do not create `ref_*.md` even if 
 
 1. **Novel patterns**: The source introduces workflow patterns, design principles, or architectural idioms not already captured in existing `ref_*.md` files
 2. **Domain-relevant**: The patterns are applicable to the user's research or programming workflows (not just the source's own domain)
-3. **Reusable frameworks**: The source provides conceptual frameworks that could inform future skill design, analysis optimization, or agent workflow decisions
+3. **Reusable frameworks**: The source provides conceptual frameworks that could inform future skill design, analysis optimisation, or agent workflow decisions
 
 ### Output Format
 
@@ -268,7 +268,7 @@ Each checkbox is a **verification artifact** — unchecked = skipped = automatic
 
 ## Phase 6: Proposal QC Loop
 
-Apply **QC Sub-Procedure** (see above) to the optimization proposal text.
+Apply **QC Sub-Procedure** (see above) to the optimisation proposal text.
 
 **`--dry-run`**: If enabled and QC passes → output proposal + `[DRY RUN]` notice → terminate.
 
@@ -374,7 +374,7 @@ Rollback: [backup paths]
 
 Test scenarios in `references/test-scenarios.md` cover EXIT POINTs, security preflight, dry-run, three-check, write-deny, structured checklist, and rule liveness. Run after major version bumps.
 
-**Deprecation criteria**: Deprecate when Claude Code provides native structured config optimization, or when the ecosystem stabilizes to the point where ad-hoc optimization is sufficient.
+**Deprecation criteria**: Deprecate when Claude Code provides native structured config optimisation, or when the ecosystem stabilises to the point where ad-hoc optimisation is sufficient.
 
 ## Edge Cases
 
