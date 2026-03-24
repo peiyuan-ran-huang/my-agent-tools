@@ -196,7 +196,7 @@ Tests every issue entry uses full 9-field table (Category through User Response)
 
 ## T8d. Subagent Return Summary Contract
 
-Tests canonical structured summary: `R[k] Complete · [theme]`, Issues (severity breakdown), D/V Rounds, Tool Calls, Temp File. **Owner**: `subagent-prompt.md` return-summary. **Invariant**: return-summary is machine-checkable; `Temp File` part of contract.
+Tests canonical structured summary: `R[k] Complete · [theme]`, Issues (severity breakdown), D/V Rounds, Tool Calls (with failed count), Tool Degradation, Temp File. **Owner**: `subagent-prompt.md` return-summary. **Invariant**: return-summary is machine-checkable; `Temp File` part of contract.
 
 ## T8e. Partial Report Salvage Paths
 

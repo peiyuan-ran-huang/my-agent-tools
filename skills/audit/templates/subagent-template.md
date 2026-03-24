@@ -165,7 +165,8 @@ After all D/V rounds complete, return the following structured summary exactly:
 R[k] Complete · [theme name]
   Issues: [n] (Critical [a] / Major [b] / Minor [c])
   D/V Rounds: [d]D + [v]V
-  Tool Calls: [n]
+  Tool Calls: [n] ([f] failed)
+  Tool Degradation: None | [tool_name: error_type ×count; ...]
   Temp File: [path]
 ```
 
@@ -211,7 +212,7 @@ MCP-free rules:
 - **Paper citation verification (mandatory)**: For each reference, at minimum search PubMed for title plus first author plus year to confirm it actually exists.
 - **Method verification (mandatory for key methods)**: Original literature sources for key statistical methods must be verified; Brave Search or Brave LLM context search may supplement but does not replace the PubMed/original-source requirement when those sources are available.
 - **Parallel invocation**: Tool calls for multiple independent issues within the same D/V round may execute in parallel.
-- **Tool failure**: If a tool call fails or returns no results, mark the issue as `could not verify`; do not fabricate verification conclusions.
+- **Tool failure**: If a tool call fails or returns no results, mark the issue as `could not verify`; do not fabricate verification conclusions. Additionally, track each tool failure (tool name, error type or HTTP status, count) for the return summary `Tool Degradation` field.
 - **MCP-free binding override**: If the orchestrator bound the MCP-free variant, the PubMed/external-tool requirements remain the normative ideal, but the subagent must record `could not verify` for checks that cannot be completed without MCP and let Phase 2 handle supplementation.
 
 ## Terminology Glossary

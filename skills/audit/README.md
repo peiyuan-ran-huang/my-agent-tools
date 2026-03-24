@@ -404,6 +404,17 @@ The 2026-03-20 structural refactor, live maintenance-system hardening (canonical
 
 ### Scope, Calibration, And Release Updates / 范围、校准与发布更新
 
+- `2026-03-24`: pre-publication QC pass
+- `2026-03-24`：发布前 QC 检查
+  - repo synced to match local (12 files updated from 2026-03-23/24 fixes)
+  - 仓库与本地同步（12 个文件更新自 2026-03-23/24 修复）
+  - `verification-issue-ledger.md` added to `sync.sh` no-clobber list
+  - `verification-issue-ledger.md` 加入 `sync.sh` 免覆盖列表
+  - README Quick Start updated from "future distribution" framing to current installation instruction
+  - README 快速开始从"未来分发"措辞更新为当前安装说明
+  - `sync.sh` trap lifecycle comment added for clarity
+  - `sync.sh` 添加 trap 生命周期注释以提高可读性
+
 - `2026-03-23`: release acceptance — all five target families (`paper`, `code`, `plan`, `data`, `mixed`) passed `validate-report.sh`; sequential fallback (Agent tool unavailable to nested agents) declared in all runs; 5/5 current under batch validator. Smoke reports archived locally.
 - `2026-03-23`：发布验收——所有五个目标家族（`paper`、`code`、`plan`、`data`、`mixed`）均通过 `validate-report.sh`；所有运行中声明了顺序回退（嵌套代理不可用 Agent 工具）；批量验证器下 5/5 通过。烟雾测试报告已本地归档。
 
@@ -437,10 +448,10 @@ These items are not runtime faults but rather maintenance goals worth continuing
 - 四个配置管理脚本已从保留基线恢复；`audit-self-check.sh` 是后续新增的维护检查器。如果需要更强的保证，可以添加更深层的执行级验证
 - If a better Chinese maintenance experience is desired, a decision can be made on whether to add Chinese `references/` documents
 - 如果需要更好的中文维护体验，可以决定是否添加中文 `references/` 文档
-- If the project enters public distribution in the future, packaging, distribution instructions, and repository-level documentation should be handled separately at that point
-- 如果项目未来进入公开分发，打包、分发说明和仓库级文档应在届时单独处理
-- `templates/subagent-template.md` / `references/phase-2-merge.md` do not yet explicitly require outputting an empty `| Issue | Source | Explanation |` table when `### Cross-Round Independent Discoveries` has zero findings; current smoke reports were manually fixed, and the root cause is pending resolution (see `verification-issue-ledger.md` V-20260323-001)
-- `templates/subagent-template.md` / `references/phase-2-merge.md` 尚未明确要求在 `### Cross-Round Independent Discoveries` 零发现时输出空的 `| Issue | Source | Explanation |` 表格；当前烟雾测试报告已手动修复，根因待解决（见 `verification-issue-ledger.md` V-20260323-001）
+- Installation: copy the `audit/` directory into `~/.claude/skills/` (see repo-level README for details)
+- 安装方式：将 `audit/` 目录复制到 `~/.claude/skills/`（详见仓库级 README）
+- ~~`templates/subagent-template.md` / `references/phase-2-merge.md` do not yet explicitly require outputting an empty table when `### Cross-Round Independent Discoveries` has zero findings~~ — **Resolved** (V-20260323-001): `phase-2-merge.md` §2.4 line 84 and `report-template.md` lines 114-118 now contain the explicit zero-discovery row requirement; goldens updated; `validate-report.sh` enforces the table header (`subagent-template.md` governs only temp-report format; the zero-discovery table is a final-report concern handled by `phase-2-merge.md` and `report-template.md`, so it required no direct change)
+- ~~`templates/subagent-template.md` / `references/phase-2-merge.md` 尚未明确要求在零发现时输出空表格~~ — **已解决** (V-20260323-001)：`phase-2-merge.md` §2.4 第 84 行和 `report-template.md` 第 114-118 行现已包含显式零发现行要求；goldens 已更新；`validate-report.sh` 强制检查表头（`subagent-template.md` 仅管辖 temp-report 格式；零发现表格是 `phase-2-merge.md` 和 `report-template.md` 负责的 final-report 事项，无需直接修改）
 
 ---
 

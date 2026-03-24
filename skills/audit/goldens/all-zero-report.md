@@ -8,6 +8,7 @@
 **Big Rounds Executed**: R1–R3 (3 rounds total)
 **Total Issues**: 0 (Critical 0 / Major 0 / Minor 0)
 **Cross-Round Independent Discoveries**: 0 ⭐
+**Tool Degradation**: None
 
 ## Summary Statistics
 

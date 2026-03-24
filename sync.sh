@@ -18,12 +18,13 @@ for skill_dir in "$REPO_DIR/skills/"/*/; do
   dest="$SKILLS_DIR/$skill_name"
 
   # No-clobber list: these user-extensible files are preserved during sync.
-  # Only pitfalls.md and examples.md are protected. All other files
-  # (SKILL.md, taxonomy.md, references/*, etc.) are overwritten by the
+  # pitfalls.md, examples.md, and verification-issue-ledger.md are protected.
+  # All other files (SKILL.md, references/*, etc.) are overwritten by the
   # repo version. If you customise other files locally, back them up
   # before running sync.sh.
   pitfalls_backup=""
   examples_backup=""
+  ledger_backup=""
   if [[ -f "$dest/pitfalls.md" ]]; then
     pitfalls_backup=$(mktemp)
     cp "$dest/pitfalls.md" "$pitfalls_backup"
@@ -32,11 +33,19 @@ for skill_dir in "$REPO_DIR/skills/"/*/; do
     examples_backup=$(mktemp)
     cp "$dest/examples.md" "$examples_backup"
   fi
+  if [[ -f "$dest/verification-issue-ledger.md" ]]; then
+    ledger_backup=$(mktemp)
+    cp "$dest/verification-issue-ledger.md" "$ledger_backup"
+  fi
 
-  # Trap: restore user files if interrupted between cp and mv
+  # Trap lifecycle: defined per-iteration so $dest and *_backup variables
+  # still hold their current-iteration values when the trap fires. Cleared
+  # at the end of each iteration (trap - EXIT INT TERM) so the previous
+  # skill's cleanup function does not fire when the next skill is processed.
   cleanup() {
     [[ -n "$pitfalls_backup" && -f "$pitfalls_backup" ]] && mv "$pitfalls_backup" "$dest/pitfalls.md" 2>/dev/null || true
     [[ -n "$examples_backup" && -f "$examples_backup" ]] && mv "$examples_backup" "$dest/examples.md" 2>/dev/null || true
+    [[ -n "$ledger_backup" && -f "$ledger_backup" ]] && mv "$ledger_backup" "$dest/verification-issue-ledger.md" 2>/dev/null || true
   }
   trap cleanup EXIT INT TERM
 
@@ -52,6 +61,10 @@ for skill_dir in "$REPO_DIR/skills/"/*/; do
   if [[ -n "$examples_backup" ]]; then
     mv "$examples_backup" "$dest/examples.md"
     echo "  ⏭ $skill_name/examples.md (user file preserved)"
+  fi
+  if [[ -n "$ledger_backup" ]]; then
+    mv "$ledger_backup" "$dest/verification-issue-ledger.md"
+    echo "  ⏭ $skill_name/verification-issue-ledger.md (user file preserved)"
   fi
 
   trap - EXIT INT TERM  # Clear trap after successful restore

@@ -11,6 +11,7 @@
 **Cross-Round Dedup Merges**: 1 groups (2 original → 1 merged entry; net reduction: 1 issues)
 **Cross-Round Independent Discoveries**: 0 ⭐
 **Model**: claude-opus-4-6 | Extended thinking: ON
+**Tool Degradation**: None
 
 ---
 

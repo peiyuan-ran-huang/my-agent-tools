@@ -27,6 +27,7 @@ Where this template explicitly says so, a documented richer variant is also acce
 **Total Issues**: [n] (Critical [a] / Major [b] / Minor [c])
 **Cross-Round Independent Discoveries**: [n] ⭐
 **Model**: [actual model used, if known from session context; omit if unavailable] | Extended thinking: [ON/OFF, if determinable; omit if unavailable]
+**Tool Degradation**: None | [tool_name: error_type ×count (affected rounds)]
 
 Allowed richer full-report metadata variant:
 

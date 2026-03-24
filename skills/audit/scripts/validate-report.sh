@@ -116,6 +116,7 @@ case "$report_mode" in
       ERRORS+=("full report is missing an accepted Total Issues metadata line")
     fi
     require_prefix "**Cross-Round Independent Discoveries**:" "full report is missing the Cross-Round Independent Discoveries metadata line"
+    require_prefix "**Tool Degradation**:" "full report is missing the Tool Degradation metadata line"
     require_literal "## Issue List" "full report is missing the Issue List section"
     require_literal "| Field | Content |" "full report is missing the canonical issue-table scaffold"
     require_literal "## Summary Statistics" "full report is missing the Summary Statistics section"
@@ -145,6 +146,7 @@ case "$report_mode" in
     require_prefix "**Big Rounds Executed**:" "all-zero report is missing the Big Rounds Executed metadata line"
     require_prefix "**Total Issues**:" "all-zero report is missing the Total Issues metadata line"
     require_prefix "**Cross-Round Independent Discoveries**:" "all-zero report is missing the Cross-Round Independent Discoveries metadata line"
+    require_prefix "**Tool Degradation**:" "all-zero report is missing the Tool Degradation metadata line"
     require_literal "## Summary Statistics" "all-zero report is missing the Summary Statistics section"
     require_literal "| Big Round | Theme | Critical | Major | Minor | D/V Rounds | Tool Calls |" "all-zero report is missing the canonical Summary Statistics table header"
     require_literal "Audit complete, no issues found." "all-zero report is missing the fixed no-issues completion line"

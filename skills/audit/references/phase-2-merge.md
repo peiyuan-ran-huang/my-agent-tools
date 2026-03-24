@@ -29,6 +29,12 @@ No-MCP supplement protocol:
   - if the issue still cannot be verified, retain it and annotate `Verification Source` as `Unverified (MCP unavailable, orchestrator supplement inconclusive)`
 - Do not retract an issue solely because it could not be tool-verified under MCP unavailability.
 
+Tool degradation collection:
+- Read the `Tool Degradation` field from each subagent return summary.
+- If any subagent reports tool degradation (value other than `None`), aggregate entries by tool name and error type across all subagents, noting which big rounds were affected (e.g., `brave_web_search: 422 ×3 (R1, R3)`).
+- Carry the aggregated tool degradation notes to the report header `**Tool Degradation**` field and the final conversation summary.
+- If all subagents report `None`, set the aggregate to `None`.
+
 All-zero short-circuit:
 - If all big rounds completed successfully, with no failed or incomplete flags, and the total issue count across all big rounds is `0`, skip cross-round deduplication and unified numbering.
 - In that case, generate the simplified final report directly in `2.4`.
@@ -125,6 +131,7 @@ Big Rounds Executed: R1–R[N] ([B] batches, [N] subagents)
 Total Issues: [n] (Critical [a] / Major [b] / Minor [c])
 Cross-Round Independent Discoveries: [n] (⭐ high confidence)
 Cross-Round Dedup Merges: [n] entries
+Tool Degradation: None | [aggregated tool:error ×count (affected rounds)]
 Report Path: [path]
 Configuration: N/A (detect+guide mode; no settings were modified)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

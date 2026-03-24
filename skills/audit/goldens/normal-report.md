@@ -9,6 +9,7 @@
 **Total Issues**: 1 (Critical 0 / Major 1 / Minor 0)
 **Cross-Round Independent Discoveries**: 0 ⭐
 **Model**: claude-opus-4-6 | Extended thinking: ON
+**Tool Degradation**: None
 
 ---
 

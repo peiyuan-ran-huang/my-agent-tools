@@ -59,9 +59,9 @@ Reference format:
 
 ```text
 Batch 1 Complete:
-  R1 · Scientific Accuracy: 3 issues (Critical 1 / Major 1 / Minor 1), 4D+3V, 8 tool calls
-  R2 · Citation Verification: 5 issues (Critical 2 / Major 2 / Minor 1), 5D+4V, 15 tool calls
-  R3 · Statistical Methods: 2 issues (Major 1 / Minor 1), 3D+2V, 5 tool calls
+  R1 · Scientific Accuracy: 3 issues (Critical 1 / Major 1 / Minor 1), 4D+3V, 8 tool calls (0 failed)
+  R2 · Citation Verification: 5 issues (Critical 2 / Major 2 / Minor 1), 5D+4V, 15 tool calls (2 failed)
+  R3 · Statistical Methods: 2 issues (Major 1 / Minor 1), 3D+2V, 5 tool calls (0 failed)
 ────────────────────────────────────────
 ```
 
@@ -91,6 +91,7 @@ This reduced visibility is an intentional trade-off of the parallel architecture
 Temp report expectations for dispatched subagents:
 - Every big round is expected to write to its own temp report path, as provided by the bound subagent template.
 - The per-round temp report path contract is `[report_dir]/audit_R[k]_temp.md`; Phase 1 must bind a concrete path matching this contract for each big round.
+- When multiple audit runs may execute in parallel (e.g., batch smoke via Agent tool), Phase 1 must include a run-unique token in the report directory path or filename (e.g., `[report_dir]/run_[timestamp]/audit_R[k]_temp.md` or `[report_dir]/audit_[pid]_R[k]_temp.md`) to prevent temp-file collisions across concurrent runs. Within a single audit run, each big round already uses a unique R[k] suffix, so no collision occurs. See also `templates/subagent-template.md` § Audit Task for the subagent-facing note on this topic.
 - A normally completed `0-issue` big round must still produce a temp report file.
 - Phase 1 binds and passes these temp-file expectations to subagents, but the actual write protocol, table format, incremental append behavior, and write-protection rules belong to `templates/subagent-template.md`.
 - Phase 2 owns temp-file collection, merge behavior, and cleanup.
