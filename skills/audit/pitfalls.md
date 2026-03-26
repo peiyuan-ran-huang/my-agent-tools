@@ -12,7 +12,7 @@ The bullets below are navigation cues, not authoritative rule text.
 
 For each pitfall below:
 - identify the failure pattern
-- fix the behavior by following the linked canonical file
+- fix the behaviour by following the linked canonical file
 - do not copy rules back into this file as a second truth source
 
 ---
@@ -46,7 +46,7 @@ For each pitfall below:
 
 **Why it is dangerous**
 
-- it distorts prioritization and teaches the wrong severity scale
+- it distorts prioritisation and teaches the wrong severity scale
 
 **Navigation cue**
 

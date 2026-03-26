@@ -284,7 +284,7 @@ Severity: `Blocker`
   - a documented reason why a scenario was not added
 - [ ] The config-mismatch maintenance fixture still encodes the conditional helper-script boundary:
   - `config-optimize.sh` is only suggested before restart if the user wants a temporary switch for the next audit session
-  - `config-restore.sh` is only suggested after the audit if that optimize step was actually applied before restarting into the audit
+  - `config-restore.sh` is only suggested after the audit if that optimise step was actually applied before restarting into the audit
   - the audit itself still does not require any restore action
 
 ## 8. Output Calibration Coverage
