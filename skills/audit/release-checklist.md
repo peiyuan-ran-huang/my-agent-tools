@@ -297,6 +297,9 @@ Severity: `Warning`
   - cross-round dedup presentation
   - no-MCP supplement presentation
   - zero-issue / all-zero presentation
+  - D/V cycle distinction
+  - tool degradation reporting
+  - sequential fallback notice
 - [ ] Example outputs do not accidentally teach a weaker or shorter report shape than the canonical template expects.
 - [ ] Example 1 still preserves the canonical `---` separator between the metadata block and `## Issue List`.
 - [ ] Example outputs do not become a second template authority.

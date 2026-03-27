@@ -303,3 +303,82 @@ Calibration rule:
 - "I re-read the same text" is discovery, not verification
 - verification requires a different tool, a different source, or a cross-reference to a different section
 - `Verification Source` must describe what was actually checked, not just say "verified" or "code inspection"
+
+---
+
+## Example 7: Tool Degradation Reporting
+
+This example shows how to report tool failures transparently in the report header and return summary, based on real experience where Brave Search returned HTTP 422 errors and Grep timed out during an audit.
+
+### Return summary excerpt (subagent → orchestrator)
+
+```text
+R1 Complete · Numerical Internal Consistency
+  Issues: 12 (Critical 2 / Major 6 / Minor 4)
+  D/V Rounds: 4D + 3V
+  Tool Calls: 18 (5 failed)
+  Tool Degradation: Brave Search: HTTP 422 ×5 (R1)
+  Temp File: C:/tmp/audit_R1_temp.md
+```
+
+### Final report header excerpt
+
+```markdown
+**Tool Degradation**: Brave Search: HTTP 422 ×5 (R1); Grep: timeout ×1 (R3)
+```
+
+### How it should NOT look
+
+```markdown
+**Tool Degradation**: None
+```
+
+When tool failures actually occurred but were silently absorbed.
+
+Calibration rule:
+
+- tool failures must flow from the subagent return summary (`Tool Degradation` field) through merge into the final report header
+- `None` in the final report means zero tool failures across all big rounds, not "failures happened but we worked around them"
+- if a tool failure prevented verification, the affected issue must show `could not verify` in its `Verification Source`, not a fabricated conclusion
+- the `(X failed)` suffix in `Tool Calls` must match the count of failures reported in `Tool Degradation`
+
+---
+
+## Example 8: Sequential Fallback Notice
+
+This example shows how the report changes when parallel subagent dispatch is unavailable and the audit falls back to sequential execution within the orchestrator context.
+
+### Report header difference
+
+Normal parallel execution:
+
+```markdown
+**Audit Architecture**: Parallel subagent mode | 1 batches 5 subagents
+```
+
+Sequential fallback:
+
+```markdown
+**Audit Architecture**: Sequential fallback (Agent tool unavailable) | 5 rounds executed in-context
+```
+
+### Final summary excerpt
+
+```markdown
+**Configuration**: OK | **Mode**: Sequential fallback | **Independence**: Protocol-level (not physically isolated)
+```
+
+### Required disclosure
+
+The final summary must include an explicit independence disclaimer when sequential fallback was used:
+
+```markdown
+> Note: This audit used sequential fallback due to Agent tool unavailability. Big round independence is protocol-level only (not physically isolated). Findings may exhibit confirmation bias between rounds.
+```
+
+Calibration rule:
+
+- sequential fallback must never be presented as equivalent to parallel isolated execution
+- the architecture line must explicitly state `Sequential fallback` and the reason
+- the independence guarantee must be downgraded to `Protocol-level` and this downgrade must be visible in the report
+- if all rounds were sequential, do not claim `Parallel subagent mode` in the header

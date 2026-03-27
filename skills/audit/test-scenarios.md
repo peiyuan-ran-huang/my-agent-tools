@@ -102,9 +102,13 @@ Tests target-type-specific core-section prioritisation for large files with defe
 
 Tests Phase 0 reads target thoroughly (complete pass) before theme planning. **Owner**: `SKILL.md` Phase 0 target-loading. **Invariant**: target loading is prerequisite for planning.
 
+## T2k. Config Mismatch With Declined Optimize Suggestion
+
+Tests `STATUS: MISMATCH` path where helper scripts are exposed and planning layer recommends `scripts/config-optimize.sh`, but user declines: audit continues without settings modification; planning announcement retains mismatch warning with current vs optimal values; no mid-session settings change occurs. **Owner**: `SKILL.md` Phase 0 config-check, `references/phase-0-planning.md`. **Invariant**: declining optimize does not block audit; mismatch is informational-only regardless of optimize decision.
+
 ## T3. Single-File Code Audit
 
-Tests code-target recognition, parallel dispatch, D1 LSP pre-scan (silent skip if unavailable), language-aware verification (R/Python: LSP+Grep; others: Grep-only). **Owner**: `SKILL.md` Phase 0 type-routing, `subagent-prompt.md`. **Invariant**: D/V cycle intact; LSP pre-scan D1-only; verification split is language-aware.
+Tests code-target recognition, parallel dispatch, D1 LSP pre-scan (silent skip if unavailable), language-aware verification (R/Python: LSP+Grep; others: Grep-only). **Owner**: `SKILL.md` Phase 0 type-routing, `templates/subagent-template.md`. **Invariant**: D/V cycle intact; LSP pre-scan D1-only; verification split is language-aware.
 
 ## T3b. Ambiguous First Token Priority
 
@@ -116,7 +120,7 @@ Tests quoted OneDrive-style path with spaces preserved as single target via quot
 
 ## T3d. Unreadable Target-File Branch
 
-Tests partial unreadability (skip, continue on remaining) vs. total unreadability (abort big round). **Owner**: `subagent-prompt.md` target-loading. **Invariant**: partial = continue; total = abort.
+Tests partial unreadability (skip, continue on remaining) vs. total unreadability (abort big round). **Owner**: `templates/subagent-template.md` target-loading. **Invariant**: partial = continue; total = abort.
 
 ## T3e. Big-Round Physical Isolation
 
@@ -124,11 +128,11 @@ Tests parallel big rounds run in separate subagent contexts; cross-round compari
 
 ## T3f. Phase 1 Dispatch Contract
 
-Tests batch-level parallel launch, explicit `model: "opus"`, fixed batch-dispatch/completion notices, no-confirmation inter-batch handoff, bound subagent fields, temp-path binding, MCP template-variant selection, multi-file role-labels, visible-progress limits, Phase 1 header preparation. **Owner**: `SKILL.md` Phase 1, `subagent-prompt.md`. **Invariant**: true batch-level parallel; final report writing is Phase 2.
+Tests batch-level parallel launch, explicit `model: "opus"`, fixed batch-dispatch/completion notices, no-confirmation inter-batch handoff, bound subagent fields, temp-path binding, MCP template-variant selection, multi-file role-labels, visible-progress limits, Phase 1 header preparation. **Owner**: `SKILL.md` Phase 1, `templates/subagent-template.md`. **Invariant**: true batch-level parallel; final report writing is Phase 2.
 
 ## T4. Paper Audit
 
-Tests paper-target theme selection, tool-first citation verification (PubMed mandatory, Brave supplementary), original-method/source verification, `academic-workflow.md` conditional reference (applied when the file or equivalent rules exist in context). **Owner**: `SKILL.md` Phase 0 type-routing, `subagent-prompt.md` verification. **Invariant**: PubMed-backed citation verification mandatory; `could not verify` is fallback. PubMed-backed citation verification remains mandatory for paper claims even when Brave Search or Brave LLM context search is used for supplementary cross-checks. Also, original method-source verification remains distinct from general paper fact-checking rather than collapsing into a single vague web-search path.
+Tests paper-target theme selection, tool-first citation verification (PubMed mandatory, Brave supplementary), original-method/source verification, `academic-workflow.md` conditional reference (applied when the file or equivalent rules exist in context). **Owner**: `SKILL.md` Phase 0 type-routing, `templates/subagent-template.md` verification. **Invariant**: PubMed-backed citation verification mandatory; `could not verify` is fallback. PubMed-backed citation verification remains mandatory for paper claims even when Brave Search or Brave LLM context search is used for supplementary cross-checks. Also, original method-source verification remains distinct from general paper fact-checking rather than collapsing into a single vague web-search path.
 
 ## T4b. Lite Mode Critical Verification Boundary
 
@@ -140,7 +144,7 @@ Tests `--lite` on code preserves security-critical verification. **Owner**: `SKI
 
 ## T4d. Intra-Round Parallel Tool Invocation
 
-Tests multiple independent tool calls within a single D/V round may execute in parallel. **Owner**: `subagent-prompt.md` tool-usage. **Invariant**: intra-round parallel tool invocation is allowed.
+Tests multiple independent tool calls within a single D/V round may execute in parallel. **Owner**: `templates/subagent-template.md` tool-usage. **Invariant**: intra-round parallel tool invocation is allowed.
 
 ## T5. Mixed Audit
 
@@ -164,15 +168,15 @@ Tests `data analysis` as first-class target type with own theme table and dedica
 
 ## T6. Zero-Issue Big Round
 
-Tests zero-issue temp-file shape, merge interpretation (successful not failed), simplified all-zero report, D1-no-issue skip to D2, two-consecutive-empty-D stop, guard against all-zero short-circuit when rounds are failed/incomplete. **Owner**: `subagent-prompt.md` stop-conditions, `SKILL.md` Phase 2 merge. **Invariant**: zero-issue rounds not treated as crash; all-zero short-circuit only when all rounds complete.
+Tests zero-issue temp-file shape, merge interpretation (successful not failed), simplified all-zero report, D1-no-issue skip to D2, two-consecutive-empty-D stop, guard against all-zero short-circuit when rounds are failed/incomplete. **Owner**: `templates/subagent-template.md` stop-conditions, `SKILL.md` Phase 2 merge. **Invariant**: zero-issue rounds not treated as crash; all-zero short-circuit only when all rounds complete.
 
 ## T6b. D/V Edge-Case Branches
 
-Tests D/V fixed completion lines, per-D fresh rereads, D3+ segmented reading, context-exhaustion interruption note, final-V overflow handling (annotation, severity escalation, already-Critical guard). **Owner**: `subagent-prompt.md` D/V cycle. **Invariant**: completion lines canonical; final-V overflow is explicit exceptional branch.
+Tests D/V fixed completion lines, per-D fresh rereads, D3+ segmented reading, context-exhaustion interruption note, final-V overflow handling (annotation, severity escalation, already-Critical guard). **Owner**: `templates/subagent-template.md` D/V cycle. **Invariant**: completion lines canonical; final-V overflow is explicit exceptional branch.
 
 ## T6c. Per-Big-Round Execution Limits
 
-Tests standard (`D=7`, `D+V=14`) and lite (`D=3`, `D+V=6`) per-big-round caps as hard boundaries. **Owner**: `subagent-prompt.md` execution-limits. **Invariant**: caps are execution boundaries, not soft suggestions.
+Tests standard (`D=7`, `D+V=14`) and lite (`D=3`, `D+V=6`) per-big-round caps as hard boundaries. **Owner**: `templates/subagent-template.md` execution-limits. **Invariant**: caps are execution boundaries, not soft suggestions.
 
 ## T7. MCP Unavailable
 
@@ -188,15 +192,15 @@ Tests degradation at `>=50%` first-batch failure: fixed degradation note, reduce
 
 ## T8b. Temp Report Incremental Write Protection
 
-Tests read-append-write for temp reports; write-anomaly triggers fixed note; unwritten issues retained in canonical draft-line format. **Owner**: `subagent-prompt.md` temp-report writing. **Invariant**: write-anomaly protection is explicit.
+Tests read-append-write for temp reports; write-anomaly triggers fixed note; unwritten issues retained in canonical draft-line format. **Owner**: `templates/subagent-template.md` temp-report writing. **Invariant**: write-anomaly protection is explicit.
 
 ## T8c. Temp Report 9-Field Completeness
 
-Tests every issue entry uses full 9-field table (Category through User Response) with fixed scaffold. **Owner**: `subagent-prompt.md` issue-table. **Invariant**: 9-field structure is canonical; no field silently omitted.
+Tests every issue entry uses full 9-field table (Category through User Response) with fixed scaffold. **Owner**: `templates/subagent-template.md` issue-table. **Invariant**: 9-field structure is canonical; no field silently omitted.
 
 ## T8d. Subagent Return Summary Contract
 
-Tests canonical structured summary: `R[k] Complete · [theme]`, Issues (severity breakdown), D/V Rounds, Tool Calls (with failed count), Tool Degradation, Temp File. **Owner**: `subagent-prompt.md` return-summary. **Invariant**: return-summary is machine-checkable; `Temp File` part of contract.
+Tests canonical structured summary: `R[k] Complete · [theme]`, Issues (severity breakdown), D/V Rounds, Tool Calls (with failed count), Tool Degradation, Temp File. **Owner**: `templates/subagent-template.md` return-summary. **Invariant**: return-summary is machine-checkable; `Temp File` part of contract.
 
 ## T8e. Partial Report Salvage Paths
 
@@ -208,7 +212,11 @@ Tests single retry on timeout/crash, fixed retry-failure note, missing-temp-file
 
 ## T8g. Intra-Big-Round Deduplication
 
-Tests subagent-side dedup after D/V: merge overlapping location+issue-type duplicates, append fixed independent-discovery note to Verification Source, rewrite temp report. **Owner**: `subagent-prompt.md` intra-round dedup. **Invariant**: intra-big-round dedup separate from cross-round orchestrator dedup.
+Tests subagent-side dedup after D/V: merge overlapping location+issue-type duplicates, append fixed independent-discovery note to Verification Source, rewrite temp report. **Owner**: `templates/subagent-template.md` intra-round dedup. **Invariant**: intra-big-round dedup separate from cross-round orchestrator dedup.
+
+## T8h. Tool Degradation Transparency
+
+Tests end-to-end tool-failure tracking: subagent records tool failures (e.g., Brave Search HTTP 422) in return summary `Tool Degradation` field; Phase 2 aggregates by tool name, error type, and affected rounds; aggregate flows to report header `**Tool Degradation**` line and final conversation summary; `None` is a semantic claim (zero failures across all rounds); `(X failed)` in `Tool Calls` matches `Tool Degradation` count; tool-failure-prevented verification shows `could not verify`, not fabricated conclusion. **Owner**: `templates/subagent-template.md` return-summary + tool-usage, `references/phase-2-merge.md` tool-degradation-collection, `templates/report-template.md`. **Invariant**: Tool Degradation field from subagent → merge → report is a complete information chain; `None` is semantic, not default.
 
 ## T9. Report Language Decision
 
@@ -225,6 +233,10 @@ Tests standard full-report contract: canonical headings, fixed header metadata, 
 ## T10c. Final Summary Contract
 
 Tests fixed conversation summary: `AUDIT Complete`, `Big Rounds Executed`, `Total Issues`, `Cross-Round Independent Discoveries` (`⭐ high confidence`), `Cross-Round Dedup Merges`, `Report Path`, `Configuration: N/A (detect+guide mode; no settings were modified)`. **Owner**: `SKILL.md` Phase 2 final-summary. **Invariant**: labels and line formats fixed; `AUDIT Complete` is success-only.
+
+## T10d. Post-Write Content Verification
+
+Tests §2.4.1 mechanical content checks after report write: cross-reference integrity (Related Issues P-numbers exist and match descriptions), ⭐ marker SET consistency across Issue List / Number Mapping Table / Cross-Round Discoveries, field compliance (heading format `**P-[n]**: [title]`, 9 field names/order vs template, title ≤15 chars, severity emoji), header count verification (Total Issues arithmetic, richer variant mutual presence), summary statistics arithmetic (row/column totals, post-dedup math), severity consistency in Recommended Next Steps and Overall Assessment. Tests failure handling: in-place Edit fix, 5-item degradation threshold, bounded 3-cycle verify-fix loop, post-fix non-empty re-confirmation. Skipped for all-zero short-circuit. Split-output: items 2 and 4 require appendix file. **Owner**: `references/phase-2-merge.md` §2.4.1. **Invariant**: content verification is mandatory for normal full-report path; fixes are in-place, not full rewrites.
 
 ## T11. Cross-Round Dedup And Unified Numbering
 
@@ -340,5 +352,8 @@ These scenarios are the minimum regression surface for this skill:
 - final summary contract
 - cross-round dedup and unified numbering
 - cross-round non-merge guard for same-location different-issue findings
+- tool degradation transparency (subagent → merge → report)
+- post-write content verification (cross-ref, ⭐ SET, field compliance, counts, arithmetic, severity)
+- config mismatch with declined optimize suggestion
 
 If one of these scenarios no longer has an explicit behaviour home, the skill should be treated as incomplete.

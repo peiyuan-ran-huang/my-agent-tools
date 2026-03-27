@@ -72,6 +72,8 @@ Tip: if the skill package exposes the helper scripts, the planning layer may rec
 - `scripts/config-optimize.sh` before restart, if the user wants to temporarily switch settings for the next audit session
 - `scripts/config-restore.sh` after the audit, but only if the user previously applied `scripts/config-optimize.sh` before restarting into the audit
 
+These recommendations are informational only — the audit continues regardless of whether the user applies them. Declining the optimize suggestion does not block or alter the audit flow.
+
 If the script output contains `MODEL_MISMATCH: true`, additionally append:
 
 ```text

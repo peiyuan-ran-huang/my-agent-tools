@@ -101,6 +101,57 @@ Post-write verification:
 - If any verification fails, retain temp files and follow the degraded output-warning contract in `references/degradation-and-limitations.md`.
 - On readback failure, do not emit the success summary from `2.7`.
 
+## 2.4.1 Post-Write Content Verification
+
+After post-write file verification succeeds and before cleanup, perform the following content checks on the written report. These checks target systematic mechanical errors observed in merge outputs.
+
+Checklist (all items mandatory for the normal full-report path; skip for all-zero short-circuit):
+
+1. **Cross-reference integrity**: For every issue P-1 through P-[total], read its `Related Issues` field. Every P-number referenced must:
+   - exist as an issue heading in the report (i.e., the target P-number is actually defined)
+   - point to the correct issue (verify by checking that the parenthetical description matches the target issue's short title or topic)
+   - If the Related Issues field value is `None`, skip cross-reference checking for that issue.
+
+2. **⭐ marker consistency**: For every cross-round merged issue identified in §2.2:
+   - ⭐ must appear in the issue heading in the Issue List
+   - ⭐ must appear in the corresponding row of the Number Mapping Table
+   - ⭐ must appear in the Cross-Round Independent Discoveries table
+   - The SET of ⭐-marked P-numbers must be identical across all three locations (not just the count — collect P-numbers from each location and confirm they match)
+
+3. **Field compliance**: For every issue entry, verify that:
+   - Issue heading follows exact format `**P-[n]**: [short title]` (bold P-number, colon, space, title) per template spec
+   - Field names exactly match `templates/report-template.md`: Category, Severity, Location, Issue Description, Verification Source, Related Issues, Potential Impact, AI Preliminary Suggestion, User Response
+   - Field order matches the canonical order defined in `templates/report-template.md` across all entries
+   - Issue title length ≤15 characters (Unicode code points), excluding the ⭐ marker and surrounding whitespace, per template spec
+   - Severity field includes emoji prefix (🔴 Critical / 🟡 Major / ⚪ Minor)
+
+4. **Header count verification**: Verify that the header metadata counts match the actual report content:
+   - `Total Issues` count = number of P-numbered entries in the Issue List
+   - Critical + Major + Minor = Total Issues
+   - `Cross-Round Independent Discoveries` count = number of ⭐-marked issues
+   - `Cross-Round Dedup Merges` count (if using richer variant) = number of multi-source rows in Number Mapping Table (rows where Original Number(s) contains multiple R[k]-x identifiers)
+   - `Pre-dedup Total` (if using richer variant) = sum of per-round counts in Summary Statistics
+   - If any richer variant field is present (`Total Issues (post-dedup)`, `Pre-dedup Total`, `Cross-Round Dedup Merges`), verify ALL three are present; if minimal `Total Issues` is used, verify neither richer field appears
+
+5. **Summary Statistics arithmetic**: Verify that:
+   - (richer variant) Each row's Total (pre-dedup) = Critical + Major + Minor for that row
+   - Column totals = sum of per-round values
+   - (richer variant) Post-dedup total = Pre-dedup total minus absorbed duplicates
+
+6. **Severity consistency in Recommended Next Steps and Overall Assessment**: For any issue referenced by P-number in Recommended Next Steps or Overall Assessment, verify that its stated severity matches the actual severity in the Issue List.
+
+Note: Near-duplicate detection is a semantic judgment task that cannot be reliably mechanized as a post-write check. It remains a known limitation of best-effort §2.2 dedup and is not addressed by this checklist.
+
+Split-output note: When the report was split into main + appendix files (per §2.4 write policy), apply all checklist items across both files. Items 2 and 4 specifically require reading the appendix file for Number Mapping Table and Cross-Round Independent Discoveries verification.
+
+On failure of any check:
+- Fix the error in-place (re-read the report, apply Edit, re-verify the fixed item).
+- Do not re-write the entire report for isolated field-level fixes.
+- If fixes exceed 5 items, flag as potential merge-quality degradation in the final summary.
+- After all fixes, re-run the full checklist. If the re-run discovers new errors (not previously present), fix and re-run again, up to a maximum of 3 verify-fix cycles total. If errors persist after 3 cycles, flag as merge-quality degradation and proceed.
+- After all §2.4.1 fixes pass, re-confirm that the written file remains non-empty (Edit operations could theoretically truncate).
+- If Read or Edit tools fail during §2.4.1 (as distinct from content-check failures), treat as tool degradation: retain the report as-is, skip remaining checklist items, and proceed to §2.5. The §2.7 success summary may still be emitted (§2.4 readback already confirmed the file), but the Tool Degradation field must reflect the §2.4.1 interruption.
+
 ## 2.5 Cleanup
 
 After merge completion:

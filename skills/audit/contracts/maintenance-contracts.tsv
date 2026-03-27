@@ -14,7 +14,7 @@ canonical_map_row	| `SKILL.md` | English orchestrator entry protocol |
 canonical_map_row	| `SKILL_ZH.md` | Chinese entry protocol with the same runtime boundaries |
 canonical_map_row	| `references/phase-0-planning.md` | Detailed planning behaviour |
 canonical_map_row	| `references/phase-1-dispatch.md` | Dispatch and batch-management behaviour |
-canonical_map_row	| `references/phase-2-merge.md` | Merge, dedup, writeout, cleanup behaviour |
+canonical_map_row	| `references/phase-2-merge.md` | Merge, dedup, content verification, writeout, cleanup behaviour |
 canonical_map_row	| `references/degradation-and-limitations.md` | Failure handling, degradation paths, context-pressure guidance, platform limitations |
 canonical_map_row	| `templates/subagent-template.md` | Canonical subagent execution protocol |
 canonical_map_row	| `templates/report-template.md` | Canonical final report structure |
@@ -37,7 +37,10 @@ coverage_item_literal	- data analysis audit
 coverage_item_literal	- mixed audit
 coverage_item_literal	- MCP unavailable
 coverage_item_literal	- sequential fallback
+coverage_item_literal	- tool degradation transparency (subagent → merge → report)
+coverage_item_literal	- config mismatch with declined optimize suggestion
 
+coverage_item_literal	- post-write content verification (cross-ref, ⭐ SET, field compliance, counts, arithmetic, severity)
 coverage_item_regex	^- config (`MISMATCH`|mismatch)$
 coverage_item_regex	^- no-argument( recent-deliverable)? auto-target$
 coverage_item_regex	^- partial-report salvage( / merge interruption| paths)$
@@ -58,6 +61,9 @@ scenario_heading_regex	^## T7\. MCP Unavailable$
 scenario_heading_regex	^## T8\. Sequential Fallback$
 scenario_heading_regex	^## T8e\. (Partial Report Salvage Paths|.*Merge Interruption.*)$
 scenario_heading_regex	^## T10\. Final Output Readback( And Split Output)?$
+scenario_heading_regex	^## T10d\. Post-Write Content Verification$
+scenario_heading_regex	^## T8h\. Tool Degradation Transparency$
+scenario_heading_regex	^## T2k\. Config Mismatch With Declined Optimize Suggestion$
 
 example_heading	## Example 1: Good Report Excerpt
 example_heading	## Example 2: Over-Reporting Anti-Pattern
@@ -65,6 +71,8 @@ example_heading	## Example 3: Cross-Round Dedup With Star
 example_heading	## Example 4: no-MCP Supplement
 example_heading	## Example 5: Zero-Issue Big Round
 example_heading	## Example 6: D/V Cycle — Discovery vs Verification
+example_heading	## Example 7: Tool Degradation Reporting
+example_heading	## Example 8: Sequential Fallback Notice
 
 example_order	## Example 1: Good Report Excerpt	## Example 2: Over-Reporting Anti-Pattern	**Model**: claude-opus-4-6 | Extended thinking: ON	---	## Issue List
 

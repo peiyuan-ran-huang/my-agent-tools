@@ -1,6 +1,6 @@
 # AUDIT
 
-**Version baseline:** `v0.3.0`
+**Version baseline:** `v0.3.2`
 **Baseline date:** `2026-03-18`
 **Refactor date:** `2026-03-20`
 
@@ -114,7 +114,7 @@ If conflicts arise between different files, the canonical source defined here ta
 | `SKILL_ZH.md` | Chinese entry protocol with the same runtime boundaries |
 | `references/phase-0-planning.md` | Detailed planning behaviour |
 | `references/phase-1-dispatch.md` | Dispatch and batch-management behaviour |
-| `references/phase-2-merge.md` | Merge, dedup, writeout, cleanup behaviour |
+| `references/phase-2-merge.md` | Merge, dedup, content verification, writeout, cleanup behaviour |
 | `references/degradation-and-limitations.md` | Failure handling, degradation paths, context-pressure guidance, platform limitations |
 | `templates/subagent-template.md` | Canonical subagent execution protocol |
 | `templates/report-template.md` | Canonical final report structure |
@@ -165,6 +165,7 @@ audit/
   scripts/
     audit-self-check.sh
     check-smoke-evidence.sh
+    execution-test.sh
     validate-report.sh
     test-golden.sh
     config-check.sh
@@ -219,6 +220,8 @@ The following files are maintenance-layer assets, not runtime authorities:
   [scripts/check-smoke-evidence.sh](scripts/check-smoke-evidence.sh)：批量重验证器，检查归档的 Markdown 烟雾测试报告是否仍符合当前 `validate-report.sh` 的报告格式边界，并帮助区分当前证据与过时证据；优先扫描 `reports/` 子树，若不存在则回退到根级 `*.md`
 - [scripts/validate-report.sh](scripts/validate-report.sh): thin-layer report-shape validator for verifying normal / all-zero / partial markdown report shapes, as well as the documented richer full-report variant\
   [scripts/validate-report.sh](scripts/validate-report.sh)：薄层报告格式验证器，用于验证正常 / 全零 / 部分 Markdown 报告格式，以及文档中记录的更丰富的完整报告变体
+- [scripts/execution-test.sh](scripts/execution-test.sh): dynamic behaviour test harness covering config-check/optimize/restore, validate-report, and parse-audit-args execution paths\
+  [scripts/execution-test.sh](scripts/execution-test.sh)：动态行为测试脚手架，覆盖 config-check/optimize/restore、validate-report 和 parse-audit-args 的执行路径
 - [scripts/test-golden.sh](scripts/test-golden.sh): minimal executable regression check against committed goldens\
   [scripts/test-golden.sh](scripts/test-golden.sh)：针对已提交黄金标准的最小可执行回归检查
 - [examples.md](examples.md): output calibration examples\
@@ -403,6 +406,40 @@ The 2026-03-20 structural refactor, live maintenance-system hardening (canonical
 2026-03-20 的结构性重构、实时维护系统加固（权威所有权、维护合约、检查器支撑的漂移控制、可执行测试脚手架和黄金标准）、Windows/脚本兼容性工作，以及所有五个目标家族（`paper`、`code`、`plan`、`data`、`mixed`）的首次真实新会话发布验收，均由 Codex 贡献。
 
 ### Scope, Calibration, And Release Updates / 范围、校准与发布更新
+
+- `2026-03-27`: `v0.3.2` — deferred tasks completion + post-write verification + execution testing\
+  `2026-03-27`：`v0.3.2` — 延期任务全部完成 + 写后验证规则 + 执行级测试
+  - `execution-test.sh` added: 550 lines, 57 dynamic behaviour tests covering config-check/optimize/restore, validate-report, and parse-audit-args\
+    新增 `execution-test.sh`：550 行，57 项动态行为测试覆盖 config-check/optimize/restore、validate-report 和 parse-audit-args
+  - T8h (Tool Degradation Transparency) and T2k (Config Mismatch With Declined Optimize Suggestion) test scenarios added\
+    新增 T8h（工具降级透明度）和 T2k（配置不匹配拒绝优化建议）测试场景
+  - §2.4.1 post-write content verification rules added to phase-2-merge.md (6 categories: cross-ref, star-set, field compliance, counts, arithmetic, severity)\
+    §2.4.1 写后内容验证规则加入 phase-2-merge.md（6 类：交叉引用、星标集合、字段合规、计数、算术、严重性）
+  - T10d (Post-Write Content Verification) test scenario and coverage item added\
+    新增 T10d（写后内容验证）测试场景和覆盖项
+  - 4 Chinese reference translations created then removed (low practical value for LLM); SKILL_ZH.md dual-path loading reverted to EN-only\
+    4 个中文参考翻译创建后移除（LLM 实用价值低）；SKILL_ZH.md 双路径加载恢复为纯英文
+  - phase-0-planning.md: explicit declined-optimize-does-not-block-audit clause\
+    phase-0-planning.md：显式说明拒绝优化不阻塞审计
+  - regex_rule namespace collision fix in audit-self-check.sh\
+    audit-self-check.sh 中 regex_rule 命名空间碰撞修复
+  - test-scenarios.md: batch rename subagent-prompt.md → templates/subagent-template.md (13 occurrences)\
+    test-scenarios.md：批量重命名 subagent-prompt.md → templates/subagent-template.md（13 处）
+  - smoke tests (§1): 6 target families + degraded-path drill completed, 35 mechanical errors found and fixed\
+    烟雾测试（§1）：6 个目标家族 + 降级路径演练完成，发现并修复 35 个机械性错误
+  - audit-self-check: 419/419 pass\
+    自检：419/419 通过
+
+- `2026-03-26`: `v0.3.1` — formatting cleanup + release checklist pass\
+  `2026-03-26`：`v0.3.1` — 格式清理 + 发布检查通过
+  - all American English spellings normalised to British English across the package\
+    全包美式拼写统一为英式拼写
+  - bilingual EN/CN documentation reformatted: English and Chinese translations now on separate lines (previously on the same line)\
+    双语文档重新排版：英中翻译分行显示（原先挤在同一行）
+  - release checklist §1–§11 verified: audit-self-check 412/412, golden 15/15, all blockers pass\
+    发布检查清单 §1–§11 验证通过：自检 412/412，golden 15/15，所有阻塞项通过
+  - no logic, architecture, or runtime behaviour changes\
+    无逻辑、架构或运行时行为变更
 
 - `2026-03-24`: pre-publication QC pass\
   `2026-03-24`：发布前 QC 检查

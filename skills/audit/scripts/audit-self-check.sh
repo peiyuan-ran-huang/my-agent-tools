@@ -930,6 +930,11 @@ fi
 # Fixtures:       T001-T050                          (test-scenarios fixed-line)
 # Anchors:        R001-R022                          (reference/template section headings)
 # Coverage:       A001+, A015-A018                   (checklist, regex, scenario, example)
+# Execution tests (scripts/execution-test.sh — separate checker, listed here for cross-reference):
+#                 E001-E014 (config-check), E020-E028 (config-optimize),
+#                 E030-E040 (config-restore), E050-E055 (validate-report),
+#                 E060-E070 (parse-audit-args)
+# Note: check-smoke-evidence.sh also uses E001-E002 in its own context (separate output)
 # ──────────────────────────────────────────────────────────────────
 
 # Run nested self-probes only for the live package that this script belongs to.
@@ -1135,6 +1140,7 @@ REFERENCE_ANCHORS=(
   "$PACKAGE_ROOT/templates/report-template.md|## Overall Assessment|R020"
   "$PACKAGE_ROOT/templates/report-template.md|## Recommended Next Steps|R021"
   "$PACKAGE_ROOT/templates/report-template.md|## Appendix|R022"
+  "$PACKAGE_ROOT/references/phase-2-merge.md|## 2.4.1 Post-Write Content Verification|R023"
 )
 for entry in "${REFERENCE_ANCHORS[@]}"; do
   IFS='|' read -r file needle rule <<< "$entry"
@@ -1239,7 +1245,7 @@ mapfile -t CHECKLIST_ITEMS < <(contract_rest_lines coverage_item_literal)
 if [[ ${#CHECKLIST_ITEMS[@]} -eq 0 ]]; then
   record_finding FAIL A130 "$CONTRACTS_FILE" "maintenance contracts file does not define any coverage_item_literal entries"
 fi
-check_expected_count A134 "$CONTRACTS_FILE" "coverage_item_literal" "${#CHECKLIST_ITEMS[@]}" 13
+check_expected_count A134 "$CONTRACTS_FILE" "coverage_item_literal" "${#CHECKLIST_ITEMS[@]}" 16
 checklist_rule=4
 for needle in "${CHECKLIST_ITEMS[@]}"; do
   rule_id="$(printf 'A%03d' "$checklist_rule")"
@@ -1251,7 +1257,7 @@ if [[ ${#COVERAGE_ITEM_REGEXES[@]} -eq 0 ]]; then
   record_finding FAIL A131 "$CONTRACTS_FILE" "maintenance contracts file does not define any coverage_item_regex entries"
 fi
 check_expected_count A135 "$CONTRACTS_FILE" "coverage_item_regex" "${#COVERAGE_ITEM_REGEXES[@]}" 4
-regex_rule=15
+regex_rule=$checklist_rule
 for pattern in "${COVERAGE_ITEM_REGEXES[@]}"; do
   rule_id="$(printf 'A%03d' "$regex_rule")"
   check_section_regex FAIL "$rule_id" "$TEST_SCENARIOS" '## Coverage Checklist' "$pattern" "Coverage Checklist is missing required regex-backed item: $pattern"
@@ -1261,7 +1267,7 @@ mapfile -t SCENARIO_HEADINGS < <(contract_rest_lines scenario_heading_regex)
 if [[ ${#SCENARIO_HEADINGS[@]} -eq 0 ]]; then
   record_finding FAIL A132 "$CONTRACTS_FILE" "maintenance contracts file does not define any scenario_heading_regex entries"
 fi
-check_expected_count A136 "$CONTRACTS_FILE" "scenario_heading_regex" "${#SCENARIO_HEADINGS[@]}" 15
+check_expected_count A136 "$CONTRACTS_FILE" "scenario_heading_regex" "${#SCENARIO_HEADINGS[@]}" 18
 scenario_rule=20
 for pattern in "${SCENARIO_HEADINGS[@]}"; do
   rule_id="$(printf 'A%03d' "$scenario_rule")"
@@ -1275,7 +1281,7 @@ if [[ -s "$EXAMPLES_FILE" ]]; then
   if [[ ${#EXAMPLE_HEADINGS[@]} -eq 0 ]]; then
     record_finding FAIL A133 "$CONTRACTS_FILE" "maintenance contracts file does not define any example_heading entries"
   fi
-  check_expected_count A137 "$CONTRACTS_FILE" "example_heading" "${#EXAMPLE_HEADINGS[@]}" 6
+  check_expected_count A137 "$CONTRACTS_FILE" "example_heading" "${#EXAMPLE_HEADINGS[@]}" 8
   example_rule=102
   for needle in "${EXAMPLE_HEADINGS[@]}"; do
     rule_id="$(printf 'A%03d' "$example_rule")"

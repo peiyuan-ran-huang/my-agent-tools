@@ -129,8 +129,6 @@ description: Use when the user explicitly invokes ---audit for a high-stakes pap
 
 ## 支持文件加载顺序
 
-当前详细 support files 仍以英文文件为 canonical source。中文入口负责提供语义等价的入口协议；需要详细执行细则时，按以下顺序加载英文 canonical files。
-
 ### 正常执行
 
 - 阶段 0：`references/phase-0-planning.md`
