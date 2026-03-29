@@ -1,6 +1,6 @@
-# my-agent-skills
+# my-agent-tools
 
-Reusable AI agent skills for Claude Code, synced across devices.
+Reusable AI agent skills and commands for Claude Code, synced across devices.
 
 ## Structure
 
@@ -19,14 +19,14 @@ commands/
 ## First-time setup (new device)
 
 ```bash
-git clone https://github.com/peiyuan-ran-huang/my-agent-skills.git ~/my-agent-skills
-bash ~/my-agent-skills/sync.sh
+git clone https://github.com/peiyuan-ran-huang/my-agent-tools.git ~/my-agent-tools
+bash ~/my-agent-tools/sync.sh
 ```
 
 ## Update (existing device)
 
 ```bash
-bash ~/my-agent-skills/sync.sh
+bash ~/my-agent-tools/sync.sh
 ```
 
 ## Skills
