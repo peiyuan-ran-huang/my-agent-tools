@@ -3,7 +3,7 @@ name: qc
 description: Use when the user's message starts with ---qc to request a structured five-dimensional review of code, plans, documents, data, advice, or skills/prompts.
 ---
 
-<!-- version: 1.1.0 | SYNC RULE: Changes to this file MUST be mirrored in SKILL_ZH.md, and vice versa.
+<!-- version: 1.2.0 | SYNC RULE: Changes to this file MUST be mirrored in SKILL_ZH.md, and vice versa.
 Allowed differences: (1) frontmatter `name` (qc vs qc-zh), (2) frontmatter `description` language,
 (3) loading behavior note in SKILL_ZH.md, (4) translation-process notes (e.g., comments explaining which sections are kept in English). Sync metric: semantic equivalence per section, NOT line-count equality. -->
 
@@ -93,11 +93,12 @@ if --sub active:
 ### Subagent Specification
 
 - **Agent type**: `general-purpose`, `model: "opus"` (latest Opus-class model per runtime conventions; see Degradation below if unavailable)
-- **Startup cleanup**: Before writing temp files, if `C:/tmp/qc_sub/` already exists, delete all its contents first (prevents stale files from crashed/interrupted previous sessions from contaminating the current review).
-- **Input**: Write two temp files to `C:/tmp/qc_sub/` (create the directory if it doesn't exist):
+- **Session directory**: At the first subagent dispatch in a session, generate a session-unique working directory: run `echo "$(date +%s)_${RANDOM}"` via Bash to obtain a unique ID, then use `C:/tmp/qc_sub_<id>/` as the working directory (e.g., `C:/tmp/qc_sub_1711700000_12345/`). Store this path as `QC_SUB_DIR` and reuse it for all subsequent subagent dispatches within the session. In loop mode, each round's cleanup and next round's write use the same `QC_SUB_DIR`.
+- **Startup cleanup**: Before writing temp files, if `QC_SUB_DIR` already exists, delete all its contents first (prevents stale files from crashed/interrupted previous sessions from contaminating the current review).
+- **Input**: Write two temp files to `QC_SUB_DIR` (create the directory if it doesn't exist):
   - `target_temp.md` — the review target content (for file targets, copy the file content; for in-context content, write it to temp)
   - `findings_temp.md` — five-dimension findings in QC report format (each finding headed by `#### [Dimension] — [Severity]`); for Pass-rated rounds with no findings, write: `✓ Correctness / Completeness / Optimality / Consistency / Standards: No issues\n\n**Overall Rating**: Pass`. At the end of findings_temp.md, append a `## Matched Pitfalls` section listing the pitfall entries that matched the current target context (so the subagent has access to user-specific check items)
-- **Prompt**: Must use the following canonical template verbatim. Only the four `{{...}}` fields may be filled in. Do NOT add instructions to focus on specific dimensions, narrow the review scope, or skip any aspect.
+- **Prompt**: Must use the following canonical template verbatim. Only the five `{{...}}` fields may be filled in. Do NOT add instructions to focus on specific dimensions, narrow the review scope, or skip any aspect.
 
 ````
 You are an independent reviewer who has NOT participated in the creation or initial review of the target below. Your task is to provide a thorough, unbiased second opinion.
@@ -106,11 +107,11 @@ You are an independent reviewer who has NOT participated in the creation or init
 - **Type**: {{TARGET_TYPE}}
 - **Domain context**: {{DOMAIN_CONTEXT}}
 - **Target-specific checks**: {{TARGET_OVERLAYS}}
-- **Content**: Read the file `C:/tmp/qc_sub/target_temp.md`
+- **Content**: Read the file `{{QC_SUB_DIR}}/target_temp.md`
 - **Original file path** (if file-based target): {{ORIGINAL_FILE_PATH}}
 
 ## Initial Review Findings
-Read the file `C:/tmp/qc_sub/findings_temp.md`
+Read the file `{{QC_SUB_DIR}}/findings_temp.md`
 
 ## Cross-validation (mandatory for file-based targets)
 If an original file path is provided above, ALSO read it directly from disk and compare with the temp copy. If they differ, the disk version is authoritative — base your review on it and note the discrepancy. If the original file cannot be read (not found, permission error), proceed with the temp copy and note: [cross-validation skipped: original file unreadable].
@@ -161,9 +162,10 @@ Respond with a JSON object ONLY (no markdown wrapping, no commentary outside JSO
   - `{{DOMAIN_CONTEXT}}`: 1-2 sentence description of the domain (e.g., "R tidyverse data processing script for epidemiological analysis" / "academic manuscript following STROBE guidelines")
   - `{{TARGET_OVERLAYS}}`: copy the full overlay checklist for the target type from §Target-Specific Overlays (e.g., for Code: "+Security vulnerabilities +Performance +Error handling +Readability +Dependency reasonableness +Test coverage")
   - `{{ORIGINAL_FILE_PATH}}`: for file-based targets, the original file path on disk (e.g., `~/project/analysis.R`); for in-context content, write "N/A — in-context content"
+  - `{{QC_SUB_DIR}}`: the session-unique working directory path generated in the Session directory step (e.g., `C:/tmp/qc_sub_1711700000_12345`)
 
   **Constraint**: If the main agent needs to provide additional context (e.g., round number, what previous rounds found), it may add a `## Additional Context` section AFTER the template content, but this section MUST NOT override, narrow, or prioritize any dimension over others. Violations — such as "focus on Completeness" or "particularly check blast radius" — are prohibited.
-- **Cleanup**: Delete `C:/tmp/qc_sub/` contents after integrating each subagent result (in loop mode, clean up after each subagent round, not just at loop exit)
+- **Cleanup**: Delete `QC_SUB_DIR` contents after integrating each subagent result (in loop mode, clean up after each subagent round, not just at loop exit)
 
 ### Degradation
 

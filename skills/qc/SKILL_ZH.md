@@ -3,7 +3,7 @@ name: qc-zh
 description: 当用户消息以 ---qc 开头时触发，对代码、方案、文档、数据、建议或技能/提示词进行五维结构化审查。中文参考版（不会被自动加载）。
 ---
 
-<!-- version: 1.1.0 | 同步规则：此文件的任何改动必须同步到 SKILL.md，反之亦然。
+<!-- version: 1.2.0 | 同步规则：此文件的任何改动必须同步到 SKILL.md，反之亦然。
 允许差异：(1) frontmatter name 字段 (qc vs qc-zh)，(2) frontmatter description 语言，(3) SKILL_ZH.md 的加载说明，(4) 翻译过程注释（如说明哪些部分保留英文原文的注释）。
 同步标准：逐节语义等价，非行数相等。 -->
 
@@ -92,12 +92,13 @@ if --sub 激活:
 
 ### 子代理规格
 
-- **Agent 类型**：`general-purpose`，`model: "opus"`（运行时约定下的最新 Opus 级模型；不可用时见下方降级处理）
-- **启动清理**：在写入临时文件前，若 `C:/tmp/qc_sub/` 已存在，先删除其全部内容（防止崩溃/中断的前一次会话的残留文件污染当前审查）。
-- **输入**：写入两个临时文件到 `C:/tmp/qc_sub/`（目录不存在时自动创建）：
+- **Agent 类型**：`general-purpose`，`model: "opus"`（运行时约定下的最新 Opus 级模型；不可用时见下方降级处��）
+- **会话目录**：在 session 首次派发子代理时，生成 session 唯一的工作目录：通过 Bash 运行 `echo "$(date +%s)_${RANDOM}"` 获取唯一 ID，然后使用 `C:/tmp/qc_sub_<id>/` 作为工作目录（如 `C:/tmp/qc_sub_1711700000_12345/`）。将此路径存储为 `QC_SUB_DIR`，在同一 session 的所有后续子代理派发中复用。循环模式下，每轮的清理和下一轮的写入使用同一个 `QC_SUB_DIR`。
+- **启动清理**：在写入临时文件前，若 `QC_SUB_DIR` 已存在，先删除其全部内容（防止崩溃/中断的前一次会话的残留文件污染当前审查）。
+- **输入**：写入两个临时文件到 `QC_SUB_DIR`（目录不存在时自动创建）：
   - `target_temp.md` — 审查目标内容（文件目标则复制文件内容；上下文中的内容则写入临时文件）
   - `findings_temp.md` — 五维审查发现，使用 QC 报告格式（每条发现以 `#### [维度] — [严重性]` 为标题）；对 Pass 评级且无发现的轮次，写入：`✓ Correctness / Completeness / Optimality / Consistency / Standards: No issues\n\n**Overall Rating**: Pass`。在 findings_temp.md 末尾追加 `## Matched Pitfalls` 部分，列出与当前审查目标上下文匹配的错题本条目（使子代理也能访问用户自定义的检查项）
-- **Prompt**：必须使用以下规范模板逐字填写。仅允许填入四个 `{{...}}` 标记字段。不得添加指示聚焦特定维度、缩窄审查范围或跳过任何方面的指令。
+- **Prompt**：必须使用以下规范模板逐字填写。��允许填入五个 `{{...}}` 标记字段。不得添加指示聚焦特定维度、缩窄审查范围或跳过任何方面的指令。
 
   <!-- 以下模板为子代理使用的英文原文，不翻译。仅翻译填入字段说明和约束条款。 -->
 
@@ -108,11 +109,11 @@ You are an independent reviewer who has NOT participated in the creation or init
 - **Type**: {{TARGET_TYPE}}
 - **Domain context**: {{DOMAIN_CONTEXT}}
 - **Target-specific checks**: {{TARGET_OVERLAYS}}
-- **Content**: Read the file `C:/tmp/qc_sub/target_temp.md`
+- **Content**: Read the file `{{QC_SUB_DIR}}/target_temp.md`
 - **Original file path** (if file-based target): {{ORIGINAL_FILE_PATH}}
 
 ## Initial Review Findings
-Read the file `C:/tmp/qc_sub/findings_temp.md`
+Read the file `{{QC_SUB_DIR}}/findings_temp.md`
 
 ## Cross-validation (mandatory for file-based targets)
 If an original file path is provided above, ALSO read it directly from disk and compare with the temp copy. If they differ, the disk version is authoritative — base your review on it and note the discrepancy. If the original file cannot be read (not found, permission error), proceed with the temp copy and note: [cross-validation skipped: original file unreadable].
@@ -163,9 +164,10 @@ Respond with a JSON object ONLY (no markdown wrapping, no commentary outside JSO
   - `{{DOMAIN_CONTEXT}}`：1-2 句领域描述（如："R tidyverse 数据处理脚本，用于流行病学分析" / "遵循 STROBE 指南的学术稿件"）
   - `{{TARGET_OVERLAYS}}`：从 §对象专项叠加 复制该目标类型的完整叠加检查清单（如代码："+安全漏洞 +性能 +错误处理 +可读性 +依赖合理性 +测试覆盖"）
   - `{{ORIGINAL_FILE_PATH}}`：文件类目标为磁盘上的原始文件路径（如 `~/project/analysis.R`）；上下文中的内容则写 "N/A — in-context content"
+  - `{{QC_SUB_DIR}}`：在会话目录步骤中生成的 session 唯一工作目录路径（如 `C:/tmp/qc_sub_1711700000_12345`）
 
   **约束**：若主 agent 需要提供额外上下文（如轮次编号、前几轮发现了什么），可在模板内容**之后**添加 `## Additional Context` 部分，但该部分**不得**覆盖、缩窄或优先任何维度。违例——如"聚焦完整性"或"特别检查影响范围"——被禁止。
-- **清理**：每次整合子代理结果后删除 `C:/tmp/qc_sub/` 下所有临时文件（循环模式下，每轮子代理结束后清理，而非仅在循环退出时清理）
+- **清理**：每次整合子代理结果后删除 `QC_SUB_DIR` 下所有临时文件（循环模式下，每轮子代理结束后清理，而非仅在循环退出时清理）
 
 ### 降级
 

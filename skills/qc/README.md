@@ -1,7 +1,7 @@
 # QC: Five-Dimensional Deep Review / 五维深度审查
 
-**Version**: v1.1.0
-**Last Updated**: 2026-03-26
+**Version**: v1.2.0
+**Last Updated**: 2026-03-29
 
 ---
 
@@ -18,10 +18,11 @@ A stupidly simple prompt template (despite its name "Deep Review") that runs a s
 - **v0.5**: **Skill/Prompt** target overlay, **Open Questions** section for ambiguous findings, explicit **Coverage** + **Target Type** + **Blast Radius scope** declarations, formalized pitfalls tag semantics, omission-based evidence support, evidence-led principle. / **技能/提示词**对象叠加、**开放问题**部分、显式**覆盖范围** + **对象类型** + **影响范围边界声明**、形式化标签语义、缺失型证据支持、循证原则。
 - **v0.6**: **Evolution Protocol** — post-review self-reflection that proposes new pitfalls/examples when QC encounters uncovered scenarios. Propose-and-confirm: skill suggests, user approves. / **进化协议**——审查后自我反思，遇到未覆盖场景时提议新的错题本/样例条目。提议确认制：skill 提议，用户批准。
 - **v0.7**: **Calibration refinements** — meta-calibration principle (check severity bias before finalizing), expanded Skill/Prompt overlay (8 items: +degradation path, self-review bias, runtime/dev boundary), tighter auto-detect step 2 filtering. / **校准细化**——元校准原则（定稿前检查严重性偏差）、Skill/Prompt 叠加检查扩展至 8 项（+降级路径、自审偏差、运行时/开发边界）、自动检测步骤 2 过滤收紧。
-- **v0.8**: **Loop Mode** (`--loop [N]` / `--循环 [N]`) — automated review-fix-review cycle until N consecutive passes (default 3) or 10 total rounds. / **循环模式**——自动化审查-修复-再审查循环，直到连续 N 轮 Pass（默认 3）或总计 10 轮。
-- **v0.9**: **Subagent Counterfactual Mode** (`--sub` / `--子代理`) — delegates counterfactual test to a physically isolated subagent (opus) for genuine context isolation, eliminating self-review bias. In loop mode, fires only on the final round (changed in v1.0). Degrades to inline on failure. / **子代理反事实模式**——将反事实测试委托给物理隔离的独立子代理（opus），实现真正的上下文隔离，消除自审偏差。循环模式中仅在最终轮触发。失败时降级为内联。
+- **v0.8**: **Loop Mode** (`--loop [N]` / `--循环 [N]`) — automated review-fix-review cycle until N consecutive passes (default 3) or 15 total rounds (raised from 10 in v1.0). / **循环模式**——自动化审查-修复-再审查循环，直到连续 N 轮 Pass（默认 3）或总计 15 轮（v1.0 从 10 提升）。
+- **v0.9**: **Subagent Counterfactual Mode** (`--sub` / `--子代理`) — delegates counterfactual test to a physically isolated subagent (opus) for genuine context isolation, eliminating self-review bias. In loop mode, fires only on the final round (changed in v1.0). Degrades to inline on failure. / **子代理反事实模式**——将反事实测试委托给物理隔离的独立子代理（opus），实现真正的上下文隔离，消除自审偏差。循环模式中仅在最终轮触发（v1.0 起改为每轮 Pass 均触发）。失败时降级为内联。
 - **v1.0**: **Anti-Drift Hardening** — subagent fires on every pass round (not just final); No-shortcut rule enforces genuine re-read + five-dimension assessment each round; depth checkpoints every 5th round; canonical subagent prompt template prevents scope narrowing; round cap raised to 15. Quality over token cost. / **反漂移加固**——每轮 Pass 均触发子代理（非仅最终轮）；不偷懒规则强制每轮真实重读 + 五维评估；每 5 轮深度检查点；规范子代理 prompt 模板防止范围收窄；轮次上限提至 15。质量优先于 token 成本。
 - **v1.1**: **Hardening Round 2** — 6-subagent parallel QC: fix recurrence cap (3 times → user escalation), non-WNF fix queue, in-context content fix mechanism, auto-detect rejection path, depth checkpoint + subagent interaction, cross-validation fallback, post-reopen history update. / **加固第二轮**——6 子代理并行 QC：修复反复上限（3 次→用户介入）、非 WNF 修复队列、上下文内容修复机制、自动检测拒绝回退路径、depth checkpoint + 子代理交互、交叉验证 fallback、post-reopen 历史更新。
+- **v1.2**: **Session-Unique Temp Directory** — replaced hardcoded `C:/tmp/qc_sub/` with per-session `C:/tmp/qc_sub_<timestamp>_<random>/` (`QC_SUB_DIR`) to eliminate concurrent session temp file collisions. Prompt template gains 5th fill-in field `{{QC_SUB_DIR}}`. / **会话唯一临时目录**——将硬编码 `C:/tmp/qc_sub/` 替换为 per-session `C:/tmp/qc_sub_<timestamp>_<random>/`（`QC_SUB_DIR`），消除并发 session 临时文件碰撞。Prompt 模板新增第 5 个填入字段 `{{QC_SUB_DIR}}`。
 
 For full version history, see `CHANGELOG.md`. / 完整版本历史见 `CHANGELOG.md`。
 
