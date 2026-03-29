@@ -72,4 +72,31 @@ for skill_dir in "$REPO_DIR/skills/"/*/; do
   echo "  ✓ $skill_name"
 done
 
+# ── Commands ──────────────────────────────────────────────
+# Commands can be either:
+#   - Regular commands (frontmatter has 'description:' only) → ~/.claude/commands/<name>.md
+#   - Skills-as-commands (frontmatter has 'name:' field) → ~/.claude/skills/<name>/SKILL.md
+echo "Syncing commands to $HOME/.claude/ ..."
+for cmd_file in "$REPO_DIR/commands/"*.md; do
+  [[ -f "$cmd_file" ]] || continue
+  cmd_name=$(basename "$cmd_file" .md)
+  if head -20 "$cmd_file" | grep -q '^name:'; then
+    # Skill-type: install to skills dir as SKILL.md
+    dest="$SKILLS_DIR/$cmd_name"
+    mkdir -p "$dest"
+    # No-clobber: skip if local SKILL.md already exists (user may have customizations)
+    if [[ -f "$dest/SKILL.md" ]]; then
+      echo "  ⊘ $cmd_name — skipped (local SKILL.md exists; delete to re-sync)"
+    else
+      cp "$cmd_file" "$dest/SKILL.md"
+      echo "  ✓ $cmd_name (→ skills/$cmd_name/SKILL.md)"
+    fi
+  else
+    # Regular command: install to commands dir
+    mkdir -p "$HOME/.claude/commands"
+    cp "$cmd_file" "$HOME/.claude/commands/$cmd_name.md"
+    echo "  ✓ $cmd_name (→ commands/$cmd_name.md)"
+  fi
+done
+
 echo "Done."
