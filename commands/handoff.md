@@ -1,11 +1,6 @@
 ---
-name: handoff
-description: >
-  Generate a comprehensive session handoff document for seamless work continuity
-  across Claude Code sessions. This skill should be used when the user wants to
-  preserve session context, decisions, and progress before ending a session.
-  Produces a structured Markdown document and runs QC review on it.
-argument-hint: [output path]
+description: "Generate a session handoff document for seamless work continuity across sessions"
+allowed-tools: Read, Write, Bash, Grep, Glob, TaskList, Skill
 ---
 
 # Session Handoff
