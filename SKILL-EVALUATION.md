@@ -145,4 +145,4 @@ Highest score per dimension shown in **bold**.
 
 ## Commands (Not Formally Scored)
 
-The `commands/` directory contains lightweight single-file tools (handoff v0.1.0, rus v1.1.0, work) that fall below the evaluation threshold (Simple tier). They are not formally scored under the D1-D7 framework.
+The `commands/` directory contains lightweight single-file tools (handoff v0.1.0, rus v1.2.0, work) that fall below the evaluation threshold (Simple tier). They are not formally scored under the D1-D7 framework.
