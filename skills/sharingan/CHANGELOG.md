@@ -66,11 +66,6 @@ Dates represent when the version was committed, not when development started.
 - `SKILL.md`: LE-2 Maintenance clarified as context-only (`+ Maintenance for context`); Final Report template gains `[includes Borderline]` note (QC subagent: SKILL.md/reference alignment).
 - `references/leverage-exploration.md`: Build Now verdict rule Dependencies expanded None/Low → None/Low/Med (closes Medium dependencies gap — Medium = "New reference files", internal to ecosystem, no external risk).
 
-### Post-QC Cleanup Round 6 (2026-03-29)
-
-- `references/test-scenarios.md`: S-17 added (LE-4 ai-dev-idea-todo.md not-found fallback, deferred).
-- `SKILL.md`: File Map scenario count 16 → 17.
-
 ## [v0.8.0] — 2026-03-26
 
 ### Added

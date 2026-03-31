@@ -7,6 +7,11 @@ Dates represent when the version was committed to the repo, not when development
 本文件记录所有重要变更。0.1 及以上的版本增量有独立的标题条目；0.0.1 级别的修补记录为父版本条目内的 ### Patched 子节。
 日期为提交至 repo 的时间，非开发开始时间。
 
+## [v1.3] — 2026-03-31
+
+- **WNF Register for subagent**: `findings_temp.md` now includes `## WNF Register` section in loop mode, listing all won't-fix items so the subagent can distinguish re-identifications from genuinely new findings. Subagent JSON output gains `wnf_reidentified` field. Dispatch logic updated with post-dispatch cross-check: `new_findings` matching WNF register entries are reclassified; WNF-only reopens are overridden to confirmed (no pass counter reset). New `Confirmed + wnf_reidentified` note parallels existing `Confirmed + severity_adjustments`. Additional Context guidance added for WNF instructions. WNF register format: `[WNF-N] Dimension: description (Reason: reason)`; >20 items summarized to top 5 by severity. Affected files: SKILL.md, SKILL_ZH.md, examples.md (+WNF-aware example), pitfalls.md (+entry #25).
+- **Root cause**: v1.2.0 `--loop --sub` R4+ subagents repeatedly reopened with all-WNF findings because `findings_temp.md` lacked WNF state. Observed in /work v1.1.0 session (7 rounds, R4 subagent reported 6 WNF items as new).
+
 ## [v1.2] — 2026-03-29
 
 - **Session-unique temp directory**: replaced hardcoded `C:/tmp/qc_sub/` with per-session `C:/tmp/qc_sub_<timestamp>_<random>/` (`QC_SUB_DIR`) to eliminate temp file collisions between concurrent sessions (pitfalls #21/#23). New "Session directory" step generates unique ID via `date +%s` + `$RANDOM`. Prompt template gains 5th fill-in field `{{QC_SUB_DIR}}`. Affected files: SKILL.md, SKILL_ZH.md, pitfalls.md (#14 field list updated).

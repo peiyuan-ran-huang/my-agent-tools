@@ -3,7 +3,7 @@ name: qc
 description: Use when the user's message starts with ---qc to request a structured five-dimensional review of code, plans, documents, data, advice, or skills/prompts.
 ---
 
-<!-- version: 1.2.0 | SYNC RULE: Changes to this file MUST be mirrored in SKILL_ZH.md, and vice versa.
+<!-- version: 1.3.0 | SYNC RULE: Changes to this file MUST be mirrored in SKILL_ZH.md, and vice versa.
 Allowed differences: (1) frontmatter `name` (qc vs qc-zh), (2) frontmatter `description` language,
 (3) loading behavior note in SKILL_ZH.md, (4) translation-process notes (e.g., comments explaining which sections are kept in English). Sync metric: semantic equivalence per section, NOT line-count equality. -->
 
@@ -79,14 +79,31 @@ if --sub active:
     # Post-dispatch (subagent only):
     if result.source == "subagent":  # source is inferred from dispatch context, not from subagent output
         apply_severity_adjustments(result.severity_adjustments)  # applies for both confirmed and reopened
+        log_wnf_reidentifications(result.wnf_reidentified)  # audit trail only; does not affect verdict or rating
+
+        # Cross-check: reclassify any new_findings that match WNF register entries
+        for finding in result.new_findings[:]:  # iterate over copy
+            if matches_wnf_register(finding, wnf_register):  # match on dimension + area/description
+                result.wnf_reidentified.append(reclassify_as_wnf(finding))
+                result.new_findings.remove(finding)
+
         if result.verdict == "reopened":
-            apply_new_findings(result.new_findings)
-            recalculate_overall_rating()
-            update_round_history(round_number, new_overall_rating)  # replace initial 'P' with recalculated rating
-            consecutive_passes = 0  # explicit reset — do not rely on implicit next-round detection
+            if result.new_findings:  # genuinely new findings remain after cross-check
+                apply_new_findings(result.new_findings)
+                recalculate_overall_rating()
+                update_round_history(round_number, new_overall_rating)  # replace initial 'P' with recalculated rating
+                consecutive_passes = 0  # explicit reset — do not rely on implicit next-round detection
+            else:
+                # Subagent said "reopened" but only WNF re-identifications remain — override to confirmed
+                result.verdict = "confirmed"
+                # consecutive_passes NOT reset — WNF-only reopen is a false alarm
 ```
 
 > **Confirmed + severity_adjustments**: A `confirmed` verdict may still include non-empty `severity_adjustments` (e.g., the subagent agrees no new issues were missed but recommends re-rating an existing finding). These adjustments are applied to the main report regardless of verdict.
+
+> **Confirmed + wnf_reidentified**: A `confirmed` verdict may include non-empty `wnf_reidentified` — the subagent found no genuinely new issues but re-identified known WNF items. These are logged for audit trail but do not affect rating or pass counter. If the subagent returns verdict `reopened` with `new_findings` empty after cross-check (all items matched WNF register), the verdict is overridden to `confirmed`.
+
+> **Confirmed + new_findings**: If a subagent returns `confirmed` with non-empty `new_findings` (self-contradictory output), the verdict takes precedence — `new_findings` are not processed (the `if result.verdict == "reopened"` branch is never entered). Log a warning in the round report if this occurs.
 
 > **Anti-downgrade self-check**: Before writing the `**Counterfactual**:` line, verify: "Is `--sub` active AND is this round rated Pass (loop mode) or any rating (non-loop)?" If YES, you MUST dispatch a subagent — if you find yourself about to write an inline counterfactual when the condition is met, STOP and dispatch the subagent instead. Never silently downgrade to inline without reporting `[degraded: inline fallback]` and the specific failure reason. If NO (i.e., loop mode + non-Pass round), inline counterfactual is the **designed behavior** — no degradation tag needed.
 
@@ -97,7 +114,16 @@ if --sub active:
 - **Startup cleanup**: Before writing temp files, if `QC_SUB_DIR` already exists, delete all its contents first (prevents stale files from crashed/interrupted previous sessions from contaminating the current review).
 - **Input**: Write two temp files to `QC_SUB_DIR` (create the directory if it doesn't exist):
   - `target_temp.md` — the review target content (for file targets, copy the file content; for in-context content, write it to temp)
-  - `findings_temp.md` — five-dimension findings in QC report format (each finding headed by `#### [Dimension] — [Severity]`); for Pass-rated rounds with no findings, write: `✓ Correctness / Completeness / Optimality / Consistency / Standards: No issues\n\n**Overall Rating**: Pass`. At the end of findings_temp.md, append a `## Matched Pitfalls` section listing the pitfall entries that matched the current target context (so the subagent has access to user-specific check items)
+  - `findings_temp.md` — five-dimension findings in QC report format (each finding headed by `#### [Dimension] — [Severity]`); for Pass-rated rounds with no findings, write: `✓ Correctness / Completeness / Optimality / Consistency / Standards: No issues\n\n**Overall Rating**: Pass`. In loop mode, if any WNF items have accumulated, append a `## WNF Register` section after the findings (before Matched Pitfalls) listing all won't-fix items so the subagent can distinguish re-identifications from genuinely new findings. Format:
+    ```
+    ## WNF Register
+    Items below were marked won't-fix by the reviewer/user. If your independent review
+    re-identifies these same issues, report them under `wnf_reidentified` (not `new_findings`).
+    Only genuinely new issues (not matching any WNF entry) belong in `new_findings`.
+    - [WNF-1] Dimension: one-line description (Reason: reason)
+    - [WNF-2] Dimension: one-line description (Reason: reason)
+    ```
+    If the WNF register exceeds 20 items, write a summary header (`N WNF items total; top 5 by severity:`) followed by the 5 highest-severity entries (Critical > Major > Minor). At the end of findings_temp.md, append a `## Matched Pitfalls` section listing the pitfall entries that matched the current target context (so the subagent has access to user-specific check items)
 - **Prompt**: Must use the following canonical template verbatim. Only the five `{{...}}` fields may be filled in. Do NOT add instructions to focus on specific dimensions, narrow the review scope, or skip any aspect.
 
 ````
@@ -152,6 +178,9 @@ Respond with a JSON object ONLY (no markdown wrapping, no commentary outside JSO
   ],
   "new_findings": [
     {"dimension": "...", "severity": "...", "evidence": "...", "issue": "...", "suggested_fix": "..."}
+  ],
+  "wnf_reidentified": [
+    {"wnf_ref": "WNF-N", "dimension": "...", "evidence": "...", "note": "still present but acknowledged as won't-fix"}
   ]
 }
 ```
@@ -164,7 +193,7 @@ Respond with a JSON object ONLY (no markdown wrapping, no commentary outside JSO
   - `{{ORIGINAL_FILE_PATH}}`: for file-based targets, the original file path on disk (e.g., `~/project/analysis.R`); for in-context content, write "N/A — in-context content"
   - `{{QC_SUB_DIR}}`: the session-unique working directory path generated in the Session directory step (e.g., `C:/tmp/qc_sub_1711700000_12345`)
 
-  **Constraint**: If the main agent needs to provide additional context (e.g., round number, what previous rounds found), it may add a `## Additional Context` section AFTER the template content, but this section MUST NOT override, narrow, or prioritize any dimension over others. Violations — such as "focus on Completeness" or "particularly check blast radius" — are prohibited.
+  **Constraint**: If the main agent needs to provide additional context (e.g., round number, what previous rounds found), it may add a `## Additional Context` section AFTER the template content, but this section MUST NOT override, narrow, or prioritize any dimension over others. Violations — such as "focus on Completeness" or "particularly check blast radius" — are prohibited. When WNF items exist, Additional Context SHOULD include: "The WNF Register in findings_temp.md lists items the user has marked as won't-fix. Review these areas independently, but classify re-identifications under `wnf_reidentified`, not `new_findings`."
 - **Cleanup**: Delete `QC_SUB_DIR` contents after integrating each subagent result (in loop mode, clean up after each subagent round, not just at loop exit)
 
 ### Degradation

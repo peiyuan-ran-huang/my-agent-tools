@@ -3,7 +3,7 @@ name: qc-zh
 description: 当用户消息以 ---qc 开头时触发，对代码、方案、文档、数据、建议或技能/提示词进行五维结构化审查。中文参考版（不会被自动加载）。
 ---
 
-<!-- version: 1.2.0 | 同步规则：此文件的任何改动必须同步到 SKILL.md，反之亦然。
+<!-- version: 1.3.0 | 同步规则：此文件的任何改动必须同步到 SKILL.md，反之亦然。
 允许差异：(1) frontmatter name 字段 (qc vs qc-zh)，(2) frontmatter description 语言，(3) SKILL_ZH.md 的加载说明，(4) 翻译过程注释（如说明哪些部分保留英文原文的注释）。
 同步标准：逐节语义等价，非行数相等。 -->
 
@@ -79,14 +79,31 @@ if --sub 激活:
     # 派发后处理（仅子代理）：
     if result.source == "subagent":  # source 从派发上下文推断，而非从子代理输出中读取
         apply_severity_adjustments(result.severity_adjustments)  # 对 confirmed 和 reopened 均适用
+        log_wnf_reidentifications(result.wnf_reidentified)  # 仅审计追踪；不影响裁决或评级
+
+        # 交叉检查：将匹配 WNF 注册表的 new_findings 重新分类
+        for finding in result.new_findings[:]:  # 遍历副本
+            if matches_wnf_register(finding, wnf_register):  # 按维度+区域/描述匹配
+                result.wnf_reidentified.append(reclassify_as_wnf(finding))
+                result.new_findings.remove(finding)
+
         if result.verdict == "reopened":
-            apply_new_findings(result.new_findings)
-            recalculate_overall_rating()
-            update_round_history(round_number, new_overall_rating)  # 将初始 'P' 替换为重算后的评级
-            consecutive_passes = 0  # 显式重置——不依赖下一轮的隐式检测
+            if result.new_findings:  # 交叉检查后仍有真正的新发现
+                apply_new_findings(result.new_findings)
+                recalculate_overall_rating()
+                update_round_history(round_number, new_overall_rating)  # 将初始 'P' 替换为重算后的评级
+                consecutive_passes = 0  # 显式重置——不依赖下一轮的隐式检测
+            else:
+                # 子代理说 "reopened" 但只剩 WNF 重新发现——覆盖为 confirmed
+                result.verdict = "confirmed"
+                # consecutive_passes 不重置——仅 WNF 的 reopen 是误报
 ```
 
 > **Confirmed + severity_adjustments**：`confirmed` 裁决仍可包含非空 `severity_adjustments`（例如子代理确认无遗漏问题但建议调整现有发现的严重性）。无论裁决如何均适用这些调整。
+
+> **Confirmed + wnf_reidentified**：`confirmed` 裁决可包含非空 `wnf_reidentified`——子代理未发现真正的新问题但重新识别了已知的 WNF 项。这些项仅记录审计追踪，不影响评级或通过计数器。若子代理返回 `reopened` 裁决但交叉检查后 `new_findings` 为空（所有项匹配 WNF 注册表），裁决将被覆盖为 `confirmed`。
+
+> **Confirmed + new_findings**：若子代理返回 `confirmed` 但 `new_findings` 非空（自相矛盾的输出），以裁决为准——`new_findings` 不被处理（不进入 `if result.verdict == "reopened"` 分支）。如发生此情况，在轮次报告中记录警告。
 
 > **反降级自检**：在写 `**反事实**:` 行之前，验证："是否 `--sub` 激活且本轮评级为 Pass（循环模式）或任意评级（非循环模式）？"若为是，**必须**派发子代理——如果发现自己即将写内联反事实而条件满足时，**停下来**改为派发子代理。绝不在未报告 `[degraded: inline fallback]` 和具体失败原因的情况下静默降级为内联。若为否（即循环模式 + 非 Pass 轮次），内联反事实为**设计行为**——无需降级标签。
 
@@ -97,7 +114,16 @@ if --sub 激活:
 - **启动清理**：在写入临时文件前，若 `QC_SUB_DIR` 已存在，先删除其全部内容（防止崩溃/中断的前一次会话的残留文件污染当前审查）。
 - **输入**：写入两个临时文件到 `QC_SUB_DIR`（目录不存在时自动创建）：
   - `target_temp.md` — 审查目标内容（文件目标则复制文件内容；上下文中的内容则写入临时文件）
-  - `findings_temp.md` — 五维审查发现，使用 QC 报告格式（每条发现以 `#### [维度] — [严重性]` 为标题）；对 Pass 评级且无发现的轮次，写入：`✓ Correctness / Completeness / Optimality / Consistency / Standards: No issues\n\n**Overall Rating**: Pass`。在 findings_temp.md 末尾追加 `## Matched Pitfalls` 部分，列出与当前审查目标上下文匹配的错题本条目（使子代理也能访问用户自定义的检查项）
+  - `findings_temp.md` — 五维审查发现，使用 QC 报告格式（每条发现以 `#### [维度] — [严重性]` 为标题）；对 Pass 评级且无发现的轮次，写入：`✓ Correctness / Completeness / Optimality / Consistency / Standards: No issues\n\n**Overall Rating**: Pass`。循环模式下，若已累积 WNF 项，在发现部分之后（Matched Pitfalls 之前）追加 `## WNF Register` 部分，列出所有不予修复项，使子代理能区分重新发现与真正的新发现。格式：
+    ```
+    ## WNF Register
+    Items below were marked won't-fix by the reviewer/user. If your independent review
+    re-identifies these same issues, report them under `wnf_reidentified` (not `new_findings`).
+    Only genuinely new issues (not matching any WNF entry) belong in `new_findings`.
+    - [WNF-1] Dimension: one-line description (Reason: reason)
+    - [WNF-2] Dimension: one-line description (Reason: reason)
+    ```
+    若 WNF 注册表超过 20 项，写摘要头（`N WNF items total; top 5 by severity:`）后列出严重性最高的 5 项（Critical > Major > Minor）。在 findings_temp.md 末尾追加 `## Matched Pitfalls` 部分，列出与当前审查目标上下文匹配的错题本条目（使子代理也能访问用户自定义的检查项）
 - **Prompt**：必须使用以下规范模板逐字填写。��允许填入五个 `{{...}}` 标记字段。不得添加指示聚焦特定维度、缩窄审查范围或跳过任何方面的指令。
 
   <!-- 以下模板为子代理使用的英文原文，不翻译。仅翻译填入字段说明和约束条款。 -->
@@ -154,6 +180,9 @@ Respond with a JSON object ONLY (no markdown wrapping, no commentary outside JSO
   ],
   "new_findings": [
     {"dimension": "...", "severity": "...", "evidence": "...", "issue": "...", "suggested_fix": "..."}
+  ],
+  "wnf_reidentified": [
+    {"wnf_ref": "WNF-N", "dimension": "...", "evidence": "...", "note": "still present but acknowledged as won't-fix"}
   ]
 }
 ```
@@ -166,7 +195,7 @@ Respond with a JSON object ONLY (no markdown wrapping, no commentary outside JSO
   - `{{ORIGINAL_FILE_PATH}}`：文件类目标为磁盘上的原始文件路径（如 `~/project/analysis.R`）；上下文中的内容则写 "N/A — in-context content"
   - `{{QC_SUB_DIR}}`：在会话目录步骤中生成的 session 唯一工作目录路径（如 `C:/tmp/qc_sub_1711700000_12345`）
 
-  **约束**：若主 agent 需要提供额外上下文（如轮次编号、前几轮发现了什么），可在模板内容**之后**添加 `## Additional Context` 部分，但该部分**不得**覆盖、缩窄或优先任何维度。违例——如"聚焦完整性"或"特别检查影响范围"——被禁止。
+  **约束**：若主 agent 需要提供额外上下文（如轮次编号、前几轮发现了什么），可在模板内容**之后**添加 `## Additional Context` 部分，但该部分**不得**覆盖、缩窄或优先任何维度。违例——如"聚焦完整性"或"特别检查影响范围"——被禁止。当存在 WNF 项时，Additional Context 应包含："The WNF Register in findings_temp.md lists items the user has marked as won't-fix. Review these areas independently, but classify re-identifications under `wnf_reidentified`, not `new_findings`."
 - **清理**：每次整合子代理结果后删除 `QC_SUB_DIR` 下所有临时文件（循环模式下，每轮子代理结束后清理，而非仅在循环退出时清理）
 
 ### 降级

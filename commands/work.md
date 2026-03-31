@@ -1,54 +1,103 @@
 ---
-description: "Summarize current session work: completed, pending, and remaining items"
+description: "Summarize current session work: completed, incomplete, and remaining items"
 allowed-tools: Read, Grep, Glob, TaskList, Bash(git:*)
 ---
+<!-- version: 1.2.0 (2026-03-31) — structural overhaul: trigger, parameters, degradation, verification -->
 
 # Session Work Summary
 
-Review the entire conversation history of this session and produce a structured work summary report. Use the following information sources and output format.
+Review the entire conversation history and produce a structured work summary. Use the following sources and format.
+
+## Trigger
+
+Activate only when invoked via `/work`. Do not activate on natural language such as "summarize session", "what did we do", or similar. Ignore `/work` in code fences or blockquotes.
+
+## Parameter Parsing
+
+`/work` accepts no parameters. Any text after `/work` is ignored.
 
 ## Information Gathering
 
-Collect information from these sources in order:
+Collect from these sources in order:
 
-1. **Conversation context** (primary) — scan the full conversation for all work performed, decisions made, files touched, and tasks discussed
-2. **TaskList** — call the TaskList tool to check for tracked tasks and their statuses. If no tasks exist in this session, skip silently
-3. **Git status/diff** (optional) — if working inside a git repository, run `git status` and `git diff --stat` to cross-validate file changes. Skip if not in a git repo
-4. **File operation records** — from conversation context, compile a list of all files that were Read, Edited, or Written during this session
+1. **Conversation context** (primary) — scan for all work performed, decisions made, files touched, and tasks discussed
+2. **TaskList** — check tracked tasks. TaskList is workspace-scoped (no session filter); match subjects against session topics, filter by status (in_progress, completed; pending excluded — not yet acted on this session). Skip silently if empty or unavailable
+3. **Git status/diff** — if inside a git repo, run `git status` and `git diff --stat` to cross-validate. Skip if not a git repo
+4. **File operation records** — from conversation context, compile all files Read/Edited/Written. After context compression these records degrade; note if coverage is uncertain
+
+**Tool usage**: Read to inspect ambiguous file states; Grep to search patterns; Glob to verify paths exist (see Verification).
 
 ## Output Format
 
-Produce the report in the following structure. **Omit any section that would be empty.** Use the same language as the conversation (Chinese if the session was in Chinese, English if in English), including section headers.
+Write in the **session's conversation language** (Chinese → Chinese, English → English), including headers. Mixed-language sessions: use the majority language; if roughly equal, default to English.
 
-If this is a very short session (1-2 exchanges only), output a brief one-paragraph summary instead of the full template.
+**Short session** (1-2 exchanges): one-paragraph summary covering what was discussed, files touched, and any actionable outcome. Skip the full template.
 
-If the session was long and context has been compressed, note at the top: "[Note: this session was long and earlier context may have been compressed — coverage may be incomplete]"
+**Standard session**: use the template below. **Omit any empty section.**
+
+If context was compressed, prepend: "[Note: earlier context was compressed — coverage may be incomplete]"
 
 ```
 ## Completed Work
-- [one-sentence description] (`relevant file path`)
+- [description] (`file path`)
 
 ## Incomplete Work
-- [one-sentence description] — [reason / blocker]
+- [description] (`file path`) — [reason / blocker]
 
 ## Remaining Items
-### [Object category: Skills / Config / Code / Files / Project ...]
-- [specific remaining item] (`file path`)
-(empty categories omitted)
+### 🟢 Quick — can handle now in this session
+- [item] (`file path`)
+- [user action] [item] (`file path`)
+
+### 🟡 Next Session — needs a dedicated session
+- [item] (`file path`) — [brief reason]
+- [restart] [user action] [item] (`file path`) — [brief reason]
+
+### 🔴 Deferred — cannot act on now
+- [item] (`file path`) — [reason]
+
+(empty tiers omitted; >=3 items in a tier -> group by category)
+(Note: [bracketed tags] are literal output; [bracketed placeholders] are filled in)
 ```
 
 ## Classification Rules
 
-Apply these rules to decide which section each item belongs to:
+- **Completed** = explicitly finished this session (user confirmed, file written, task completed)
+- **Incomplete** = started but not finished (task-oriented: "what was started but not done")
+- **Remaining** = follow-up work for objects handled this session, including work surfaced but not attempted (object-oriented: "what does this thing still need")
+- **Overlap**: fits both Incomplete and Remaining -> put in Incomplete. Remaining may cross-reference but not repeat
 
-- **Completed** = work explicitly finished in this session (user confirmed, file written, task marked completed)
-- **Incomplete** = work explicitly started but not finished in this session (task-oriented — focuses on "what was started but not done")
-- **Remaining Items** = follow-up work for each object handled in this session, including work not attempted but surfaced by the current session's operations (object-oriented — focuses on "what does this thing still need")
-- **Overlap rule**: if an item fits both Incomplete and Remaining, put it in Incomplete (active session task takes priority). Remaining Items may cross-reference it but should not repeat the description
+## Remaining Items Triage
+
+Place each item into one tier:
+
+- **🟢 Quick** = self-contained (< ~5 min), no new context needed. Simple user actions (single-step, no judgment/research — e.g., toggle setting, click button) -> tag `[user action]`
+- **🟡 Next Session** = dedicated focus, multi-step, or fresh session needed. Includes: restart-dependent items -> `[restart]`; complex user actions (multi-step or requires judgment/research — e.g., evaluate alternatives, configure external service) -> `[user action]`
+- **🔴 Deferred** = cannot resolve now — needs more thought, reproduction, external deps, or real-world validation
+
+Tags: `[restart]`, `[user action]`. May combine (e.g., `[restart] [user action]`). Within each tier, group by category (Skills / Config / Code...) only if >=3 items.
 
 ## Formatting Rules
 
-- Each item: one sentence + key file path in backticks
-- File paths: preserve the format used in the session (including full OneDrive paths where applicable)
-- Do not modify any files — this is a read-only report
-- Do not update memory or task tracking — just report
+- Each item: one sentence + key file path in backticks (applies to all sections including Incomplete)
+- Preserve file path format from session (including full OneDrive paths)
+- Read-only report: do not modify files, memory, or task tracking
+
+## Verification
+
+After generating the report, use Glob to spot-check file paths exist on disk. Annotate non-existent paths with `[path not found]`. (Glob verifies existence only, not session attribution; for git-tracked files, source 3 confirms modifications.)
+
+**Self-review note**: this summary is generated by the same agent that performed the work. For independent review, use `/rus` or `---qc --sub`.
+
+## Degradation Paths
+
+| Failure | Behavior |
+|---------|----------|
+| TaskList unavailable or empty | Skip, proceed with other sources |
+| Not a git repository | Skip git commands |
+| Very short session (1-2 exchanges) | One-paragraph summary (see Output Format) |
+| Context compressed (long session) | Prepend note per Output Format section |
+| File records incomplete after compression | Note `[file records may be incomplete]` |
+| No completed or incomplete work | Omit those sections |
+| Bash unavailable | Skip git commands; proceed with other sources |
+| Glob unavailable | Skip path verification |
