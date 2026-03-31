@@ -404,6 +404,36 @@ Demonstrating a depth checkpoint round (every 5th round: rounds 5, 10, 15) that 
 说明 prompt 不够自包含或子代理未真正独立审查。
 ```
 
+### Subagent WNF-aware 示例 / WNF 感知示例
+
+场景：循环模式第 5 轮，存在 2 项 WNF。子代理重新识别了 WNF 项但未发现新问题。
+Scenario: Loop mode round 5, 2 WNF items exist. Subagent re-identifies WNF items but finds no new issues.
+
+```
+🔄 Round 5/15 | Passes: 2/3 | History: [M, m, P(2 WNF), P, ...]  <!-- depth checkpoint: full report required -->
+
+## QC Review Report
+**Review Target**: analysis.R
+**Target Type**: Code
+**Coverage**: Full — all 85 lines re-read from disk
+**Blast Radius**: N/A — standalone content
+**Pitfalls Check**: checked N entries; 3 matched context; 0 triggered findings
+
+### Findings
+
+✓ Correctness / Completeness / Optimality / Consistency / Standards: No issues
+
+### Summary
+- **Overall Rating**: Pass
+- **Counterfactual**: [subagent] Confirmed — independent reviewer re-identified 2 WNF items (WNF-1: missing set.seed, WNF-2: hardcoded output path) but found no genuinely new issues. Re-examined the data merge logic at lines 42-55 (most complex path); left_join keys are unique and the downstream assertion validates row count. wnf_reidentified: 2 items logged for audit trail. No new findings. No severity adjustments.
+- All dimensions clean; 2 WNF items remain as user-accepted.
+- Evolution check: no new patterns discovered
+```
+
+**关键机制 / Key mechanism**：子代理通过 `findings_temp.md` 中的 `## WNF Register` 获知 WNF 项，将重新识别的问题报告在 `wnf_reidentified`（而非 `new_findings`）中。主代理的派发后交叉检查确认无真正新发现，`consecutive_passes` 不重置。The subagent learns WNF items via the `## WNF Register` in `findings_temp.md`, reports re-identifications under `wnf_reidentified` (not `new_findings`). The main agent's post-dispatch cross-check confirms no genuinely new findings, so `consecutive_passes` is not reset.
+
+---
+
 ### Subagent Reopened 示例
 
 场景：子代理发现了初审遗漏的问题。
