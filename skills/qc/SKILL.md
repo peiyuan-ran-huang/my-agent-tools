@@ -3,7 +3,7 @@ name: qc
 description: Use when the user's message starts with ---qc to request a structured five-dimensional review of code, plans, documents, data, advice, or skills/prompts.
 ---
 
-<!-- version: 1.3.0 | SYNC RULE: Changes to this file MUST be mirrored in SKILL_ZH.md, and vice versa.
+<!-- version: 1.4.0 | SYNC RULE: Changes to this file MUST be mirrored in SKILL_ZH.md, and vice versa.
 Allowed differences: (1) frontmatter `name` (qc vs qc-zh), (2) frontmatter `description` language,
 (3) loading behavior note in SKILL_ZH.md, (4) translation-process notes (e.g., comments explaining which sections are kept in English). Sync metric: semantic equivalence per section, NOT line-count equality. -->
 
@@ -38,13 +38,30 @@ You now assume the role of **strict reviewer**. Conduct a thorough, meticulous, 
 When `--loop` is present, execute a review-fix-review cycle:
 
 1. Run standard QC review on the target
-2. **Pass** → increment consecutive pass counter (subject to subagent counterfactual override if `--sub` is active; see Subagent Counterfactual Mode); **Not Pass** → reset counter to 0, fix all non-WNF findings (Critical → Major → Minor), then re-review. If the same finding (same dimension, same location) recurs after being fixed in a prior round, note the recurrence in the round status header (e.g., `History: [M, m, M(recur), ...]`). If it recurs 3 times (i.e., reappears in 3 separate rounds after being fixed), pause and present to the user: "This finding has recurred 3 times despite attempted fixes — manual intervention may be needed. Treat as WNF or provide guidance?"
+2. **Pass** → increment consecutive pass counter (subject to subagent counterfactual override if `--sub` is active; see Subagent Counterfactual Mode); **Not Pass** → reset counter to 0, fix all non-WNF findings (Critical → Major → Minor), then re-review. If the same finding (same dimension, same location) recurs after being fixed in a prior round, note the recurrence in the round status header (e.g., `History: [M, m, M(recur), ...]`). If it recurs 3 times (i.e., reappears in 3 separate rounds after being fixed), pause and present to the user: "This finding has recurred 3 times despite attempted fixes — manual intervention may be needed. Treat as WNF or provide guidance?" Response handling follows WNF Path 2.
 3. Exit when: consecutive passes >= N (default 3), or total rounds >= 15. If the loop exits due to reaching the round cap (total rounds >= 15) while the most recent rating is non-Pass (e.g., subagent reopened on the final round), report: `[Loop cap reached: X/15 rounds completed. Final rating: [rating]. Unresolved findings remain — see last round's report above.]`
 4. Each round starts with: `🔄 Round X/15 | Passes: Y/N | History: [P, M, m, P, ...]` (P=Pass, C=Critical, M=Major, m=Minor)  <!-- emoji is part of this template's format spec; overrides default no-emoji rule -->
 5. Target is resolved once at invocation; subsequent rounds re-review the same target (files: re-read from disk; in-context content: review the most recent corrected version output by Claude — Claude applies fixes by outputting the corrected version in the round report, and subsequent rounds review that latest output). If re-read fails mid-loop (file deleted, renamed, or permissions changed), apply the same degradation as Parameter Parsing step 4: report in Coverage, fall back to in-context content if available (`[degraded: context fallback]`); if re-read fails for 2 consecutive rounds, terminate the loop with `[Loop terminated: target unreadable since round X]`. If the target was auto-detected (not explicitly specified) and `--loop` is active, confirm the auto-detected target with the user before entering the loop. If the user rejects the auto-detected target, prompt for an explicit target specification (Parameter Parsing step 3.4) before entering the loop
 6. Calibration files (examples.md, pitfalls.md): read once at start. Evolution Protocol: **loop exit round only** (the round where the loop terminates, whether by achieving N consecutive passes or hitting the round cap).
 
-In loop mode, the "review only — no auto-fixes" principle is suspended: Claude fixes findings between rounds. If a fix requires user input, pause and ask. If the user rejects a proposed fix, treat the finding as **won't-fix (WNF)**. Exclude WNF items from subsequent round severity ratings (consequently, a round where all remaining findings are WNF rates as Pass under the Overall Rating Rule). Track WNF items in the round status header for audit trail (e.g., `History: [M, P(1 WNF), P, P]`). For Critical-severity WNF: prompt the user for explicit confirmation ("This Critical finding involves [description] — confirm skip?") and tag as `P(1 C-WNF)` in the header. If a fix cannot be applied due to tool failure (e.g., Write tool unavailable for a file target), treat as requiring user intervention — pause the loop and report the failure.
+In loop mode, the "review only — no auto-fixes" principle is suspended: Claude fixes findings between rounds. If a fix requires user input, pause and ask. If a fix cannot be applied due to tool failure (e.g., Write tool unavailable for a file target), treat as requiring user intervention — pause the loop and report the failure. For any path that pauses the loop awaiting user response (including the WNF paths below), normal session timeout applies; the loop does not auto-resume.
+
+**WNF gating rule**: A finding may only be marked won't-fix (WNF) through one of these paths:
+1. **User rejects fix**: Claude proposes a fix → user explicitly rejects it (e.g., "no", "don't change that", "这个别改"). The rejection must be clearly directed at the specific fix, not a general conversational acknowledgment. If the user's response is ambiguous (neither clear acceptance nor clear rejection), do not mark as WNF — retry the fix in the next round. If the same finding receives ambiguous responses for 3 consecutive rounds, escalate to an explicit WNF prompt using Path 3's format. An escalated finding follows Path 3's full consent protocol and is recorded as path:3 in the WNF register.
+2. **Recurrence**: Finding recurs 3 times after attempted fixes → Claude prompts the user per the recurrence protocol in Loop Mode step 2. If user confirms WNF, the finding is marked WNF. If user provides guidance instead, the finding re-enters the fix cycle (not marked WNF).
+3. **Infeasible fix**: Claude determines auto-fix is infeasible (constraint conflict, capability limit, or disproportionate cost) → must issue a WNF proposal in this format:
+   `⚠️ WNF proposal: [finding ref] — [reason infeasible]`  <!-- emoji is part of this template's format spec; overrides default no-emoji rule -->
+   and wait for user response. **Consent keywords**: "WNF" / "skip" / "跳过" / "不修". If the user's response does not contain a listed keyword but unambiguously expresses WNF intent (e.g., "不用管了", "leave it", "算了"), Claude may accept it as consent but MUST record the user's exact words in the round report body for auditability. **Ambiguous responses** (e.g., "继续", "好", "OK") do NOT constitute consent — re-prompt once; if still unclear, pause the loop and present: "WNF consent unclear for [finding ref] — please confirm with WNF/skip/跳过/不修, or provide fix guidance."
+
+Note: Path 1's ambiguity counter (3 consecutive ambiguous responses) and Path 2's recurrence threshold (3 recurrences after fix application) measure different things and are mutually exclusive — ambiguous responses mean the fix was never applied, so it cannot recur.
+
+Path 3 uses the strictest consent protocol because the WNF proposal originates from Claude's judgment, not from user behavior; Paths 1 and 2 involve direct user interaction that provides sufficient intent signal.
+
+Claude MUST NOT silently mark findings as WNF based on inferred user preferences or project context. The judgment "this cannot be auto-fixed" is Claude's; the decision "skip it" is the user's.
+
+Exclude WNF items from subsequent round severity ratings (a round where all remaining findings are WNF rates as Pass under the Overall Rating Rule). Track WNF items in the round status header for audit trail (e.g., `History: [M, P(1 WNF), P, P]`). For Critical-severity WNF: prompt for explicit confirmation ("This Critical finding involves [description] — confirm skip?") and tag as `P(1 C-WNF)` in the header.
+
+**WNF retraction**: If the user explicitly requests re-evaluation of a WNF item (e.g., "fix that after all", "还是修一下"), remove it from the WNF register and re-enter the finding into the fix cycle in the next round. A retraction resets the consecutive pass counter to 0 (the re-entered finding has not yet been re-reviewed). The WNF count in subsequent round status headers reflects the current register state after the retraction.
 
 **No-shortcut rule (pass rounds)**: Even in consecutive pass rounds, every round MUST:
 1. **Re-read** the target from disk (use the Read tool; do not rely on context memory; for in-context content targets, re-examine the latest version in conversation context)
@@ -55,7 +72,7 @@ A pass round that merely copies the previous round's format without evidence of 
 
 **Depth checkpoint rounds**: In rounds where `round_number` is a multiple of 5 (rounds 5, 10, 15), you MUST produce a **full five-dimension report** with expanded reasoning (not compact format), regardless of the current rating or pass streak. Treat a depth checkpoint as if it were round 1 — approach the target with fresh eyes and maximum rigor. This periodic forced expansion counteracts the natural tendency toward shallow repetition in later rounds. Depth checkpoints and subagent counterfactual are independent — both apply when their respective conditions are met. A depth checkpoint round with `--sub` active and Pass rating produces both a full five-dimension report AND dispatches the subagent.
 
-**Context pressure management**: In long loops (round >= 6, non-checkpoint rounds), if context usage is high, you may summarize rounds 1 through (current_round - 4) into single-line status records (round number + rating + key finding IDs) to free context space. Report `[degraded: context pressure]` in Coverage if this affects review depth. If context limits are reached mid-loop, terminate with `[Loop terminated: context limit reached at round X]`.
+**Context pressure management**: In long loops (round >= 6, non-checkpoint rounds), if context usage is high, you may summarize rounds 1 through (current_round - 4) into single-line status records (round number + rating + key finding IDs) to free context space. WNF tracking state (per-finding ambiguity count for Path 1, recurrence count for Path 2, and the WNF register itself) must not be summarized — maintain it in a dedicated block outside the round-by-round summaries. Report `[degraded: context pressure]` in Coverage if this affects review depth. If context limits are reached mid-loop, terminate with `[Loop terminated: context limit reached at round X]`.
 
 **Adversarial re-framing**: In rounds 2+, before reviewing, adopt the stance: "This was written by someone else. My job is to find problems, not confirm correctness." This counteracts the natural tendency to validate your own fixes.
 
@@ -120,8 +137,8 @@ if --sub active:
     Items below were marked won't-fix by the reviewer/user. If your independent review
     re-identifies these same issues, report them under `wnf_reidentified` (not `new_findings`).
     Only genuinely new issues (not matching any WNF entry) belong in `new_findings`.
-    - [WNF-1] Dimension: one-line description (Reason: reason)
-    - [WNF-2] Dimension: one-line description (Reason: reason)
+    - [WNF-1] Dimension: one-line description (Reason: reason) (Path: 1|2|3)
+    - [WNF-2] Dimension: one-line description (Reason: reason) (Path: 1|2|3)
     ```
     If the WNF register exceeds 20 items, write a summary header (`N WNF items total; top 5 by severity:`) followed by the 5 highest-severity entries (Critical > Major > Minor). At the end of findings_temp.md, append a `## Matched Pitfalls` section listing the pitfall entries that matched the current target context (so the subagent has access to user-specific check items)
 - **Prompt**: Must use the following canonical template verbatim. Only the five `{{...}}` fields may be filled in. Do NOT add instructions to focus on specific dimensions, narrow the review scope, or skip any aspect.
@@ -347,9 +364,12 @@ Append this block to the report output:
 
 ### Write Mechanics (on user approval)
 
-- Append new entry after the last entry in the Entries section of pitfalls.md (match on `## Entries` prefix, ignoring any bilingual suffix) (or the relevant section of examples.md)
+- This applies to **pitfall** and **example** types only. For **overlay-gap** proposals, approval means flagging for a dedicated SKILL.md review session — no file write is performed.
+- **pitfalls.md**: Append new entry after the last entry in the Entries section (match on `## Entries` prefix, ignoring any bilingual suffix)
+- **examples.md**: Append after the last example block (before any trailing horizontal rule or EOF), following the existing format (section header with bilingual title, brief context, fenced code block with example report)
 - Auto-include provenance comment: `<!-- via: evolution-proposal, YYYY-MM-DD -->`
 - Before writing, scan existing entries for semantic overlap; if found, warn user and suggest merging instead of adding
+- If the Write/Edit tool fails after user approval, output the complete entry (with provenance comment) as a fenced code block in the conversation for manual insertion, and report the tool failure
 
 ### Constraints
 

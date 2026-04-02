@@ -1,7 +1,7 @@
 # QC: Five-Dimensional Deep Review / 五维深度审查
 
-**Version**: v1.3.0
-**Last Updated**: 2026-03-31
+**Version**: v1.4.0
+**Last Updated**: 2026-04-02
 
 ---
 
@@ -24,6 +24,7 @@ A stupidly simple prompt template (despite its name "Deep Review") that runs a s
 - **v1.1**: **Hardening Round 2** — 6-subagent parallel QC: fix recurrence cap (3 times → user escalation), non-WNF fix queue, in-context content fix mechanism, auto-detect rejection path, depth checkpoint + subagent interaction, cross-validation fallback, post-reopen history update. / **加固第二轮**——6 子代理并行 QC：修复反复上限（3 次→用户介入）、非 WNF 修复队列、上下文内容修复机制、自动检测拒绝回退路径、depth checkpoint + 子代理交互、交叉验证 fallback、post-reopen 历史更新。
 - **v1.2**: **Session-Unique Temp Directory** — replaced hardcoded `C:/tmp/qc_sub/` with per-session `C:/tmp/qc_sub_<timestamp>_<random>/` (`QC_SUB_DIR`) to eliminate concurrent session temp file collisions. Prompt template gains 5th fill-in field `{{QC_SUB_DIR}}`. / **会话唯一临时目录**——将硬编码 `C:/tmp/qc_sub/` 替换为 per-session `C:/tmp/qc_sub_<timestamp>_<random>/`（`QC_SUB_DIR`），消除并发 session 临时文件碰撞。Prompt 模板新增第 5 个填入字段 `{{QC_SUB_DIR}}`。
 - **v1.3**: **WNF Register for Subagent** — `findings_temp.md` now includes `## WNF Register` section in loop mode, listing all won't-fix items so the subagent can distinguish re-identifications from genuinely new findings. Subagent JSON output gains `wnf_reidentified` field. Dispatch logic updated with post-dispatch cross-check. / **子代理 WNF 感知**——循环模式下 `findings_temp.md` 新增 `## WNF Register` 部分，列出所有不予修复项，使子代理能区分重新识别与真正的新发现。子代理 JSON 输出新增 `wnf_reidentified` 字段。派发逻辑新增交叉检查。
+- **v1.4**: **WNF Gating Rule Hardening** — Context pressure state preservation (WNF counters exempt from summarization), single source of truth for recurrence response handling, WNF retraction mechanism. / **WNF 准入规则加固**——上下文压缩时 WNF 追踪状态豁免（不被压缩），复发响应处理单一信息源，WNF 撤回机制。
 
 For full version history, see `CHANGELOG.md`. / 完整版本历史见 `CHANGELOG.md`。
 

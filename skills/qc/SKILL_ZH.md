@@ -3,7 +3,7 @@ name: qc-zh
 description: 当用户消息以 ---qc 开头时触发，对代码、方案、文档、数据、建议或技能/提示词进行五维结构化审查。中文参考版（不会被自动加载）。
 ---
 
-<!-- version: 1.3.0 | 同步规则：此文件的任何改动必须同步到 SKILL.md，反之亦然。
+<!-- version: 1.4.0 | 同步规则：此文件的任何改动必须同步到 SKILL.md，反之亦然。
 允许差异：(1) frontmatter name 字段 (qc vs qc-zh)，(2) frontmatter description 语言，(3) SKILL_ZH.md 的加载说明，(4) 翻译过程注释（如说明哪些部分保留英文原文的注释）。
 同步标准：逐节语义等价，非行数相等。 -->
 
@@ -38,13 +38,30 @@ description: 当用户消息以 ---qc 开头时触发，对代码、方案、文
 当 `--loop` 存在时，执行审查-修复-再审查循环：
 
 1. 对目标执行标准 QC 审查
-2. **Pass** → 连续通过计数器 +1（若 `--sub` 激活，需经子代理反事实覆盖；见子代理反事实模式）；**非 Pass** → 计数器归零，修复所有非 WNF 发现（Critical → Major → Minor），然后重新审查。若同一发现（同一维度、同一位置）在此前某轮被修复后再次出现，在轮次状态头中记录复发（如 `History: [M, m, M(recur), ...]`）。若该发现复发 3 次（即修复后在 3 个独立轮次中再次出现），暂停并告知用户："此发现已在修复后复发 3 次——可能需要人工介入。标记为 WNF 或提供指导？"
+2. **Pass** → 连续通过计数器 +1（若 `--sub` 激活，需经子代理反事实覆盖；见子代理反事实模式）；**非 Pass** → 计数器归零，修复所有非 WNF 发现（Critical → Major → Minor），然后重新审查。若同一发现（同一维度、同一位置）在此前某轮被修复后再次出现，在轮次状态头中记录复发（如 `History: [M, m, M(recur), ...]`）。若该发现复发 3 次（即修复后在 3 个独立轮次中再次出现），暂停并告知用户："此发现已在修复后复发 3 次——可能需要人工介入。标记为 WNF 或提供指导？"用户响应处理遵循 WNF 路径 2。
 3. 退出条件：连续通过次数 >= N（默认 3），或总轮次 >= 15。若循环因达到轮次上限（总轮次 >= 15）而退出，且最近一轮评级为非 Pass（如子代理在最后一轮 reopen），则报告：`[Loop cap reached: X/15 rounds completed. Final rating: [rating]. Unresolved findings remain — see last round's report above.]`
 4. 每轮报告以状态头开始：`🔄 Round X/15 | Passes: Y/N | History: [P, M, m, P, ...]`（P=Pass, C=Critical, M=Major, m=Minor）  <!-- emoji is part of this template's format spec; overrides default no-emoji rule -->
 5. 目标在调用时解析一次；后续轮次审查同一目标（文件：从磁盘重新读取；上下文中的内容：审查 Claude 输出的最新修正版——Claude 在轮次报告中输出修正版以应用修复，后续轮次审查该最新输出）。若重新读取在循环过程中失败（文件被删除、重命名或权限变更），适用与参数解析步骤 4 相同的降级处理：在 Coverage 中报告，回退至上下文中的内容（若有，标注 `[degraded: context fallback]`）；若连续 2 轮重新读取失败，终止循环并报告 `[Loop terminated: target unreadable since round X]`。若目标为自动检测（非用户显式指定）且 `--loop` 激活，进入循环前须与用户确认自动检测的目标。若用户拒绝自动检测的目标，提示用户显式指定目标（参数解析步骤 3.4）后再进入循环
 6. 校准文件（examples.md、pitfalls.md）：启动时读取一次。进化协议：**仅在循环退出轮执行**（循环终止的那一轮，无论是通过达到 N 次连续通过还是达到轮次上限）。
 
-循环模式下，"只审不改"原则暂停：Claude 在各轮之间修复发现的问题。若修复需要用户确认，暂停循环并询问。若用户拒绝某项修复，将该发现标记为**不予修复（WNF）**。后续轮次的严重性评级中排除 WNF 项（因此，一个所有剩余发现均为 WNF 的轮次在整体评级规则下视为 Pass）。在轮次状态头中追踪 WNF 项以供审计（如 `History: [M, P(1 WNF), P, P]`）。对 Critical 级别的 WNF：需提示用户显式确认（"此 Critical 发现涉及 [描述]——确认跳过？"），并在状态头中标记为 `P(1 C-WNF)`。若因工具故障（如文件目标的 Write 工具不可用）无法应用修复，视为需用户介入——暂停循环并报告故障。
+循环模式下，"只审不改"原则暂停：Claude 在各轮之间修复发现的问题。若修复需要用户确认，暂停循环并询问。若因工具故障（如文件目标的 Write 工具不可用）无法应用修复，视为需用户介入——暂停循环并报告故障。对于任何暂停循环等待用户响应的路径（包括下方的 WNF 路径），正常的会话超时适用；循环不会自动恢复。
+
+**WNF 准入规则**：发现仅可通过以下路径被标记为不予修复（WNF）：
+1. **用户拒绝修复**：Claude 提出修复方案 → 用户明确拒绝（如 "no"、"don't change that"、"这个别改"）。拒绝必须明确针对该具体修复，而非泛泛的会话应答。若用户的回应模棱两可（既非明确接受也非明确拒绝），不标记 WNF——在下一轮重试修复。若同一发现连续 3 轮收到模棱两可的回应，升级为使用路径 3 格式的正式 WNF 提议。升级后的发现遵循路径 3 的完整同意协议，并在 WNF 注册表中记录为 path:3。
+2. **复发**：发现在尝试修复后复发 3 次 → Claude 按循环模式步骤 2 中的复发协议提示用户。若用户确认 WNF，则标记为 WNF。若用户提供指导，则该发现重新进入修复循环（不标记 WNF）。
+3. **不可行修复**：Claude 判断自动修复不可行（约束冲突、能力限制或代价不成比例）→ 必须发出以下格式的 WNF 提议：
+   `⚠️ WNF proposal: [发现引用] — [不可行原因]`  <!-- emoji is part of this template's format spec; overrides default no-emoji rule -->
+   并等待用户响应。**同意关键词**："WNF" / "skip" / "跳过" / "不修"。若用户的回应未包含上述关键词但明确表达了 WNF 意图（如"不用管了"、"leave it"、"算了"），Claude 可将其视为同意，但**必须**在轮次报告正文中记录用户的原话以供审计。**模棱两可的回应**（如"继续"、"好"、"OK"）**不构成同意**——重新提示一次；若仍不明确，暂停循环并提示："WNF consent unclear for [发现引用] — please confirm with WNF/skip/跳过/不修, or provide fix guidance."
+
+说明：路径 1 的模棱两可计数器（连续 3 轮模棱两可回应）与路径 2 的复发阈值（修复后复发 3 次）衡量的是不同的事情，且互斥——模棱两可的回应意味着修复从未被应用，因此不可能复发。
+
+路径 3 使用最严格的同意协议，因为 WNF 提议源自 Claude 的判断而非用户行为；路径 1 和 2 涉及直接的用户交互，提供了充分的意图信号。
+
+Claude **禁止**基于推断的用户偏好或项目上下文静默将发现标记为 WNF。"无法自动修复"的判断属于 Claude；"跳过"的决定属于用户。
+
+后续轮次的严重性评级中排除 WNF 项（一个所有剩余发现均为 WNF 的轮次在整体评级规则下视为 Pass）。在轮次状态头中追踪 WNF 项以供审计（如 `History: [M, P(1 WNF), P, P]`）。对 Critical 级别的 WNF：需提示用户显式确认（"此 Critical 发现涉及 [描述]——确认跳过？"），并在状态头中标记为 `P(1 C-WNF)`。
+
+**WNF 撤回**：若用户明确要求重新评估某 WNF 项（如"还是修一下"、"fix that after all"），将其从 WNF 注册表中移除，在下一轮重新纳入修复循环。撤回会将连续通过计数器重置为 0（被重新纳入的发现尚未被重新审查）。后续轮次状态头中的 WNF 计数反映撤回后的当前注册表状态。
 
 **不偷懒规则（通过轮次）**：即使在连续通过的轮次中，每轮也**必须**：
 1. **重新读取**磁盘上的目标文件（使用 Read 工具；不得依赖上下文记忆；对上下文中的内容目标，重新检视对话上下文中的最新版本）
@@ -55,7 +72,7 @@ description: 当用户消息以 ---qc 开头时触发，对代码、方案、文
 
 **深度检查点轮次**：在轮次编号为 5 的倍数的轮次（第 5、10、15 轮），**必须**产出**完整五维报告**（展开推理，非紧凑格式），无论当前评级或连续通过情况如何。将深度检查点视为第 1 轮——以全新视角和最高严格度审查目标。此定期强制展开抵消后期轮次中自然出现的浅层重复趋势。深度检查点与子代理反事实相互独立——当各自条件满足时均适用。在 `--sub` 激活且评级为 Pass 的深度检查点轮次中，同时产出完整五维报告并派发子代理。
 
-**上下文压力管理**：在长循环中（第 6 轮起，非检查点轮次），若上下文占用较高，可将第 1 轮至第 (current_round - 4) 轮压缩为单行状态记录（轮次编号 + 评级 + 关键发现 ID）以释放上下文空间。若此操作影响审查深度，在 Coverage 中报告 `[degraded: context pressure]`。若循环过程中达到上下文限制，以 `[Loop terminated: context limit reached at round X]` 终止。
+**上下文压力管理**：在长循环中（第 6 轮起，非检查点轮次），若上下文占用较高，可将第 1 轮至第 (current_round - 4) 轮压缩为单行状态记录（轮次编号 + 评级 + 关键发现 ID）以释放上下文空间。WNF 追踪状态（路径 1 的每发现模棱两可计数、路径 2 的复发计数、以及 WNF 注册表本身）不得被压缩——需在逐轮摘要之外以独立区块维护。若此操作影响审查深度，在 Coverage 中报告 `[degraded: context pressure]`。若循环过程中达到上下文限制，以 `[Loop terminated: context limit reached at round X]` 终止。
 
 **对抗性重构**：第 2 轮起，审查前先切换立场："假设这是别人写的，我的任务是找问题而非确认正确。"这抵消了对自己修复的天然认可倾向。
 
@@ -120,8 +137,8 @@ if --sub 激活:
     Items below were marked won't-fix by the reviewer/user. If your independent review
     re-identifies these same issues, report them under `wnf_reidentified` (not `new_findings`).
     Only genuinely new issues (not matching any WNF entry) belong in `new_findings`.
-    - [WNF-1] Dimension: one-line description (Reason: reason)
-    - [WNF-2] Dimension: one-line description (Reason: reason)
+    - [WNF-1] Dimension: one-line description (Reason: reason) (Path: 1|2|3)
+    - [WNF-2] Dimension: one-line description (Reason: reason) (Path: 1|2|3)
     ```
     若 WNF 注册表超过 20 项，写摘要头（`N WNF items total; top 5 by severity:`）后列出严重性最高的 5 项（Critical > Major > Minor）。在 findings_temp.md 末尾追加 `## Matched Pitfalls` 部分，列出与当前审查目标上下文匹配的错题本条目（使子代理也能访问用户自定义的检查项）
 - **Prompt**：必须使用以下规范模板逐字填写。��允许填入五个 `{{...}}` 标记字段。不得添加指示聚焦特定维度、缩窄审查范围或跳过任何方面的指令。
@@ -349,9 +366,12 @@ Respond with a JSON object ONLY (no markdown wrapping, no commentary outside JSO
 
 ### 写入机制（用户批准后）
 
-- 在 pitfalls.md 的 `## Entries` 部分最后一条之后追加新条目（匹配 `## Entries` 前缀，忽略任何双语后缀）（或 examples.md 的对应部分）
+- 仅适用于 **pitfall**（错题）和 **example**（样例）类型。对 **overlay-gap**（叠加缺口）类型，批准意味着标记待专门 SKILL.md 审查——不执行文件写入。
+- **pitfalls.md**：在 `## Entries` 部分最后一条之后追加新条目（匹配 `## Entries` 前缀，忽略任何双语后缀）
+- **examples.md**：在最后一个示例块之后追加（EOF 或尾部水平线之前），遵循现有格式（双语标题的节标题、简短上下文、代码围栏包裹的示例报告）
 - 自动附加来源注释：`<!-- via: evolution-proposal, YYYY-MM-DD -->`
 - 写入前扫描现有条目是否存在语义重叠；若有，提醒用户并建议合并而非新增
+- 若用户批准后 Write/Edit 工具失败，在对话中以代码围栏输出完整条目（含来源注释）供用户手动插入，并报告工具故障
 
 ### 约束
 
