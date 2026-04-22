@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "---qc advice\n\nAbove is a user-AI exchange where the AI recommended using `git reset --hard origin/main` to resolve a merge conflict. The user is a junior engineer with uncommitted local work. Evaluate the advice.",
+    "expected": "Activate correctly (---qc as first token). Target = Advice overlay. Identify Critical issue: git reset --hard discards uncommitted work silently. Cite specific evidence from the exchange. Apply Advice overlay (side effects, applicable boundaries). Overall Rating = Critical."
+  },
+  {
+    "id": 2,
+    "prompt": "---qc --loop 2 --sub plan\n\nPlan: \"We will migrate all 200 patient records from the old MySQL database to the new PostgreSQL one. Step 1: dump MySQL. Step 2: load into PostgreSQL. Step 3: verify.\" No downtime window, no rollback plan, no data validation step, no row-count reconciliation.",
+    "expected": "Parse --loop 2 (N=2 consecutive passes) + --sub (subagent counterfactual) correctly. Target = Plan overlay. Round 1: findings surface (missing downtime plan → Major feasibility; missing rollback → Major risk; no validation → Major completeness). Between rounds: suggest fixes. Round 2+: if fixed, run subagent counterfactual (per Dispatch Logic since Pass rated). Exit at 2 consecutive passes. Loop header per spec: `🔄 Round X/15 | Passes: Y/2 | History: [...]`."
+  },
+  {
+    "id": 3,
+    "prompt": "---qc skill\n\nReviewing a hypothetical skill `summarize.md` with frontmatter description: 'Activate when user says /summarize or mentions summary'. Body § Trigger says: 'Only activate on explicit /summarize command'. No degradation path for when input text exceeds token budget. No statement about self-review bias risk.",
+    "expected": "Parse target = Skill/Prompt (alias: skill/prompt/技能/提示词). Apply Skill/Prompt overlay (L186 new pointer to ref_llm_audit_antipatterns §A/B/C should be consulted on-demand). Findings: Consistency — Minor (description natural-language trigger vs body explicit-only); Completeness — Major (missing degradation path, per overlay explicit rule). Correctly invoke on-demand reference per v1.7.1 patch (optional — not mandatory checklist)."
+  }
+]
