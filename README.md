@@ -7,8 +7,7 @@ Reusable tools (e.g., skills and commands) for AI agents (e.g., Claude Code), sy
 ```
 skills/
   <skill-name>/
-    SKILL.md      ← skill prompt template (EN, primary)
-    SKILL_ZH.md   ← Chinese translation (reference only)
+    SKILL.md      ← skill prompt template (EN)
 
 commands/
   work.md         ← slash command (/work)

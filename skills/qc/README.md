@@ -53,15 +53,12 @@ This project does **not** represent the views of my employer or affiliated insti
 | File | Language | Role |
 |------|----------|------|
 | `SKILL.md` | English | Primary (loaded by Claude Code; core framework adaptable to other agents) |
-| `SKILL_ZH.md` | 中文 | Translation reference (not auto-loaded) |
 | `examples.md` | EN/ZH | Output calibration: good example + anti-patterns |
 | `pitfalls.md` | Any | User pitfalls ("错题本"); ships with starter entries (active during reviews) |
 | `CHANGELOG.md` | EN/ZH | Version history (0.1+ increments only) |
 | `README.md` | EN/ZH | This file; project overview and usage guide |
 
-Changes to `SKILL.md` and `SKILL_ZH.md` **must** be mirrored in each other.
-
-`SKILL.md` 和 `SKILL_ZH.md` 的改动**必须**互相同步。
+`SKILL.md` is the single canonical runtime source. `SKILL.md` 是唯一权威运行时来源。
 
 ## Prerequisites / 前置条件
 

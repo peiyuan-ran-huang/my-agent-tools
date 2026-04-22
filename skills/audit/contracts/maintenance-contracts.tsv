@@ -11,7 +11,6 @@
 # ledger_status\t<allowed status value>
 
 canonical_map_row	| `SKILL.md` | English orchestrator entry protocol |
-canonical_map_row	| `SKILL_ZH.md` | Chinese entry protocol with the same runtime boundaries |
 canonical_map_row	| `references/phase-0-planning.md` | Detailed planning behaviour |
 canonical_map_row	| `references/phase-1-dispatch.md` | Dispatch and batch-management behaviour |
 canonical_map_row	| `references/phase-2-merge.md` | Merge, dedup, content verification, writeout, cleanup behaviour |

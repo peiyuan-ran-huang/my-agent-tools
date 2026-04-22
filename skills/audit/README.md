@@ -36,7 +36,6 @@ This section is an operator-facing orientation note only.
 Canonical runtime behaviour still belongs to:
 权威运行时行为仍归属于：
 - [SKILL.md](SKILL.md)
-- [SKILL_ZH.md](SKILL_ZH.md)
 
 Recommended starting pattern:
 推荐的使用模式：
@@ -111,7 +110,6 @@ If conflicts arise between different files, the canonical source defined here ta
 | File | Canonical responsibility |
 |---|---|
 | `SKILL.md` | English orchestrator entry protocol |
-| `SKILL_ZH.md` | Chinese entry protocol with the same runtime boundaries |
 | `references/phase-0-planning.md` | Detailed planning behaviour |
 | `references/phase-1-dispatch.md` | Dispatch and batch-management behaviour |
 | `references/phase-2-merge.md` | Merge, dedup, content verification, writeout, cleanup behaviour |
@@ -137,7 +135,6 @@ In the current version, entry / references / templates / scripts have all comple
 ```text
 audit/
   SKILL.md
-  SKILL_ZH.md
   README.md
   pitfalls.md
   release-checklist.md
@@ -331,8 +328,8 @@ One live entry limitation remains explicitly documented.
 
 ## Maintenance Rules / 维护规则
 
-1. If changing entry behaviour, update `SKILL.md` first, then keep `SKILL_ZH.md` semantically aligned.\
-   如需更改入口行为，先更新 `SKILL.md`，然后保持 `SKILL_ZH.md` 语义对齐。
+1. If changing entry behaviour, update `SKILL.md` as the single canonical source.\
+   如需更改入口行为，更新 `SKILL.md` 作为唯一权威来源。
 2. If changing detailed phase behaviour, update the relevant `references/*.md` file instead of expanding the main entry again.\
    如需更改详细阶段行为，更新相关的 `references/*.md` 文件，而非再次扩展主入口。
 3. If changing subagent execution semantics, update `templates/subagent-template.md` as the canonical source.\

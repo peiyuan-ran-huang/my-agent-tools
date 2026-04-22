@@ -14,3 +14,13 @@ Desktop.ini
 *.tmp
 *.bak
 *_backup*
+
+# Credentials & env (defense in depth — none currently in tree)
+.env
+.env.*
+*.key
+*.pem
+credentials*
+
+# Logs
+*.log

@@ -47,7 +47,6 @@ Runtime authority changed.
 Default members:
 
 - [SKILL.md](SKILL.md)
-- [SKILL_ZH.md](SKILL_ZH.md)
 - any file under [references](references)
 - any file under [templates](templates)
 - runtime config scripts under [scripts](scripts) except [audit-self-check.sh](scripts/audit-self-check.sh)
